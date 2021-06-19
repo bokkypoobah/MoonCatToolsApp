@@ -518,6 +518,41 @@ const tokensModule = {
 
             logInfo("tokensModule", "execWeb3() coinbase: " + coinbase);
             const provider = new ethers.providers.Web3Provider(window.ethereum);
+
+            const moonCatRescue = new ethers.Contract(MOONCATRESCUEADDRESS, MOONCATRESCUEABI, provider);
+            const totalSupply = await moonCatRescue.totalSupply();
+            logInfo("tokensModule", "execWeb3() moonCatRescue.totalSupply: " + totalSupply.toString());
+            const rescueIndex = await moonCatRescue.rescueIndex();
+            logInfo("tokensModule", "execWeb3() moonCatRescue.rescueIndex: " + rescueIndex.toString());
+            // const catIds = await moonCatRescue.getCatIds();
+            // logInfo("tokensModule", "execWeb3() moonCatRescue.catIds: " + JSON.stringify(catIds));
+            // console.log(JSON.stringify(catIds));
+
+            function generateMoonCatImage(catId, size) {
+              size = size || 10;
+              var data = mooncatparser(catId);
+              console.log(JSON.stringify(data));
+              var canvas = document.createElement("canvas");
+              canvas.width = size * data.length;
+              canvas.height = size * data[1].length;
+              var ctx = canvas.getContext("2d");
+
+              for(var i = 0; i < data.length; i++){
+                for(var j = 0; j < data[i].length; j++){
+                  var color = data[i][j];
+                  if(color){
+                    ctx.fillStyle = color;
+                    ctx.fillRect(i * size, j * size, size, size);
+                  }
+                }
+              }
+              return canvas.toDataURL();
+            }
+
+            // var data = generateMoonCatImage("0x00f9e605e3");
+            // console.log(JSON.stringify(data));
+
+            if (false) {
             // console.table(provider);
             const name = await provider.lookupAddress(coinbase);
             logInfo("tokensModule", "execWeb3() coinbase: " + JSON.stringify(store.getters['connection/coinbase']) + " => " + name);
@@ -533,6 +568,7 @@ const tokensModule = {
             logInfo("tokensModule", "execWeb3() allnames: " + JSON.stringify(addresses) + " => " + allnames);
             const validNames = allnames.filter((n) => normalize(n) === n );
             logInfo("tokensModule", "execWeb3() validNames: " + JSON.stringify(addresses) + " => " + validNames);
+            }
 
             if (false) {
 

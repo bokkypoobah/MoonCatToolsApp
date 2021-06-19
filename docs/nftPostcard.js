@@ -9,7 +9,14 @@ const NFTPostcard = {
 
               <b-row class="mb-3">
                 <b-col md="8" class="p-3">
+
+                  <img :src="generateMoonCatImage('0x00f9e605e3', 20)" />
+
+                  <!--
+                  {{ moonCatColours[0] }}
+                  {{ catIds.length }}
                   {{ getMoonCatDetailsByRescueOrders[100] }}
+                  -->
 
                   <div id="toBeCaptured">
                     <canvas id="thecanvas" width="1024" height="480" style="border:1px solid; margin: 0 auto; position: absolute;"></canvas>
@@ -352,6 +359,12 @@ const NFTPostcard = {
     }
   },
   computed: {
+    catIds() {
+      return CATIDS;
+    },
+    moonCatColours() {
+      return MOONCATCOLOURS;
+    },
     getMoonCatDetailsByRescueOrders() {
       return moonCatDetailsByRescueOrders;
     },
@@ -452,6 +465,26 @@ const NFTPostcard = {
     },
   },
   methods: {
+    generateMoonCatImage(catId, size) {
+      size = size || 10;
+      var data = mooncatparser(catId);
+      console.log(JSON.stringify(data));
+      var canvas = document.createElement("canvas");
+      canvas.width = size * data.length;
+      canvas.height = size * data[1].length;
+      var ctx = canvas.getContext("2d");
+
+      for(var i = 0; i < data.length; i++){
+        for(var j = 0; j < data[i].length; j++){
+          var color = data[i][j];
+          if(color){
+            ctx.fillStyle = color;
+            ctx.fillRect(i * size, j * size, size, size);
+          }
+        }
+      }
+      return canvas.toDataURL();
+    },
 
     showModal() {
       this.$refs['my-modal'].show()
