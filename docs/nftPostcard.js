@@ -12,8 +12,13 @@ const NFTPostcard = {
               <b-card-group deck class="m-0">
                 <div v-for="(catId, rescueIndex) in catIds.slice(0, 50)">
                   <b-card body-class="p-1" header-class="p-2" footer-class="p-2" img-top class="m-1 p-0">
-                    {{ rescueIndex + ':' + catId }}<br />
+                    <template #header>
+                      <span variant="secondary" class="small truncate">
+                        {{ rescueIndex + ':' + catId }}
+                      </span>
+                    </template>
                     <img :src="generateMoonCatImage(catId, 5)" />
+
                     <!--
                     <b-link @click="addAsset(asset)" v-b-popover.hover="'Click to add image to the canvas'">
                       <b-img rounded="sm" variant="light" size="10.0rem" :src="asset.image_url" style="width: 15rem; height: 15rem; object-fit: contain; object-position: 50% top; background-color: #fafafa;" class="pixelated m-1 p-2"></b-img>
