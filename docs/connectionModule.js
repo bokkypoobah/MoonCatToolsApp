@@ -154,11 +154,6 @@ const Connection = {
     return {
       count: 0,
       provider: null,
-      // signer: null,
-      lastNetworkChainId: -1,
-      lastCoinbase: null,
-      lastBalance: null,
-      lastBlockHash: null,
       spinnerVariant: "success",
       lastBlockTimeDiff: "establishing network connection",
       reschedule: false,
@@ -175,16 +170,6 @@ const Connection = {
     connectionError() {
       return store.getters['connection/connectionError'];
     },
-
-    connectedOld() {
-      return store.getters['connection/connection'] != null && store.getters['connection/connection'].connected;
-    },
-    error() {
-      return store.getters['connection/connection'] == null ? null : store.getters['connection/connection'].error;
-    },
-    connectionType() {
-      return store.getters['connection/connection'] == null ? null : store.getters['connection/connection'].connectionType;
-    },
     network() {
       return store.getters['connection/network'];
     },
@@ -200,43 +185,30 @@ const Connection = {
     faucets() {
       return store.getters['connection/faucets'] || [];
     },
-
     coinbase() {
       return store.getters['connection/coinbase'];
     },
     coinbaseUpdated() {
       return store.getters['connection/coinbaseUpdated'];
     },
-
     balance() {
       return store.getters['connection/balance'];
     },
     balanceString() {
       return store.getters['connection/balance'] == null ? "" : new BigNumber(store.getters['connection/balance']).shift(-18).toString();
     },
-
     block() {
       return store.getters['connection/block'];
     },
     blockUpdated() {
       return store.getters['connection/blockUpdated'];
     },
-
     blockNumber() {
       return store.getters['connection/block'] == null ? 0 : store.getters['connection/block'].number;
     },
     blockNumberString() {
       return store.getters['connection/block'] == null ? "" : formatNumber(store.getters['connection/block'].number);
     },
-    // blockTimestampString() {
-    //   if (store.getters['connection/block'] == null) {
-    //     return "";
-    //   } else {
-    //     var date = new Date(store.getters['connection/block'].timestamp * 1000);
-    //     return new Intl.DateTimeFormat('default', {hour: 'numeric', minute: 'numeric', second: 'numeric'}).format(date) + " " +
-    //       new Intl.DateTimeFormat('default', {weekday: 'short', year: 'numeric', month: 'short', day: 'numeric'}).format(date);
-    //   }
-    // },
     txs() {
       return store.getters['connection/txs'];
     },
@@ -375,60 +347,40 @@ const connectionModule = {
     powerOn: false,
     connected: false,
     connectionError: null,
-
-    connection: {
-      connected: false,
-      provider: null,
-      // signer: null,
-      connectionType: null,
-      error: null,
-    },
-
     network: null,
     networkUpdated: false,
     networkName: null,
     explorer: "https://etherscan.io/",
     faucets: null,
-
     coinbase: null,
     coinbaseUpdated: false,
-
     balance: null,
-
     block: null,
     blockUpdated: false,
-
     txs: {},
     txError: "",
   },
   getters: {
     powerOn: state => state.powerOn,
-
     connected: state => state.connected,
     connectionError: state => state.connectionError,
-
     connection: state => state.connection,
-
     network: state => state.network,
     networkUpdated: state => state.networkUpdated,
     networkName: state => state.networkName,
     explorer: state => state.explorer,
     faucets: state => state.faucets,
-
     coinbase: state => state.coinbase,
     coinbaseUpdated: state => state.coinbaseUpdated,
-
     balance: state => state.balance,
-
     block: state => state.block,
     blockUpdated: state => state.blockUpdated,
-
     txs: state => state.txs,
     txError: state => state.txError,
   },
   mutations: {
     setPowerOn(state, powerOn) {
-      logInfo("connectionModule", "mutations.setConnectedOld(" + powerOn + ")");
+      logInfo("connectionModule", "mutations.setPowerOn(" + powerOn + ")");
       state.powerOn = powerOn;
     },
     setConnected(state, connected) {
@@ -438,23 +390,6 @@ const connectionModule = {
     setConnectionError(state, error) {
       logInfo("connectionModule", "mutations.setConnectionError(" + error + ")");
       state.connectionError = error;
-    },
-
-    setConnectedOld(state, data) {
-      logDebug("connectionModule", "mutations.setConnectedOld()");
-      state.connection.connected = true;
-      state.connection.provider = data.provider;
-      // state.connection.signer = data.signer;
-      state.connection.connectionType = data.connectionType;
-      state.connection.error = null;
-    },
-    setDisconnected(state, error) {
-      logDebug("connectionModule", "mutations.setDisconnected() - error: " + error);
-      state.connection.connected = false;
-      state.connection.provider = null;
-      // state.connection.signer = null;
-      state.connection.connectionType = null;
-      state.connection.error = error;
     },
     setNetwork(state, network) {
       logInfo("connectionModule", "mutations.setNetwork() - networkName: " + network.chainId);
@@ -473,7 +408,6 @@ const connectionModule = {
         }
       }
     },
-
     setCoinbase(state, coinbase) {
       logInfo("connectionModule", "mutations.setCoinbase(" + coinbase + ")");
       if (coinbase != state.coinbase) {
@@ -486,11 +420,9 @@ const connectionModule = {
         }
       }
     },
-
     setBalance(state, b) {
       state.balance = b;
     },
-
     setBlock(state, block) {
       logDebug("connectionModule", "mutations.setBlock()");
       if (block == null) {
@@ -512,7 +444,6 @@ const connectionModule = {
         }
       }
     },
-
     addTx(state, tx) {
       logInfo("connectionModule", "mutations.addTx(): " + tx);
       Vue.set(state.txs, tx, tx);
@@ -539,15 +470,6 @@ const connectionModule = {
       logInfo("connectionModule", "actions.setConnectionError(" + error + ")");
       context.commit('setConnectionError', error);
     },
-
-    setConnectedOld(context, data) {
-      logDebug("connectionModule", "actions.setConnectedOld()");
-      context.commit('setConnected', data);
-    },
-    setDisconnected(context, data) {
-      logDebug("connectionModule", "actions.setDisconnected()");
-      context.commit('setDisconnected', data);
-    },
     setNetwork(context, n) {
       context.commit('setNetwork', n);
     },
@@ -557,12 +479,10 @@ const connectionModule = {
     setBalance(context, b) {
       context.commit('setBalance', b);
     },
-
     setBlock(context, block) {
       logInfo("connectionModule", "actions.setBlock()");
       context.commit('setBlock', block);
     },
-
     addTx(context, tx) {
       logDebug("connectionModule", "actions.addTx(): " + tx);
       context.commit('addTx', tx);
