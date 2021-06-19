@@ -7,6 +7,41 @@ const NFTPostcard = {
 
             <b-container class="p-0" fluid>
 
+
+
+              <b-card-group deck class="m-0">
+                <div v-for="(catId, rescueIndex) in catIds.slice(0, 50)">
+                  <b-card body-class="p-1" header-class="p-2" footer-class="p-2" img-top class="m-1 p-0">
+                    {{ rescueIndex + ':' + catId }}<br />
+                    <img :src="generateMoonCatImage(catId, 5)" />
+                    <!--
+                    <b-link @click="addAsset(asset)" v-b-popover.hover="'Click to add image to the canvas'">
+                      <b-img rounded="sm" variant="light" size="10.0rem" :src="asset.image_url" style="width: 15rem; height: 15rem; object-fit: contain; object-position: 50% top; background-color: #fafafa;" class="pixelated m-1 p-2"></b-img>
+                    </b-link>
+                    <template #header>
+                      <span variant="secondary" class="small truncate">
+                        <b-link :href="asset.collection.external_url" v-b-popover.hover="'View on original site, if available. Risky out there, so be careful - ' + getCollectionTitle(asset)" target="_blank">
+                          <img :src="asset.collection.image_url" width="20px" />
+                        </b-link>
+                        {{ getCollectionTitle(asset).substring(0, 32) }}
+                      </span>
+                    </template>
+                    <template #footer>
+                      <span class="small truncate" v-b-popover.hover="getAssetName(asset)">
+                        {{ getAssetName(asset).substring(0, 32) }}
+                      </span>
+                      <span class="float-right">
+                        <b-link :href="asset.permalink + '?ref=0x000001f568875F378Bf6d170B790967FE429C81A'" v-b-popover.hover="'View on OpenSea.io'" target="_blank"><img src="images/381114e-opensea-logomark-flat-colored-blue.png" width="20px" /></b-link>
+                      </span>
+                    </template>
+                    -->
+                  </b-card>
+                </div>
+              </b-card-group>
+
+
+
+
               <b-row class="mb-3">
                 <b-col md="8" class="p-3">
 
