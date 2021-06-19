@@ -17,7 +17,7 @@ const NFTPostcard = {
                   </b-card>
                   -->
 
-                  <b-card body-class="p-1 d-flex align-items-end justify-content-center" img-bottom img-center header-class="p-2" footer-class="p-2" style="width: 10rem; height: 10rem;" img-top class="m-1 p-0 text-center text-bottom position-relative">
+                  <b-card body-class="p-3 d-flex align-items-end justify-content-center" img-bottom img-center header-class="p-2" footer-class="p-2" style="width: 10rem; height: 10rem;" img-top class="m-1 p-0 text-center text-bottom position-relative">
                     <template #header>
                       <span variant="secondary" class="small truncate">
                         {{ rescueIndex + ':' + catId }}
