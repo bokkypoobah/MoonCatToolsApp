@@ -80,6 +80,7 @@ const promisify = (inner) =>
 const Connection = {
   template: `
     <div>
+      <!--
       powerOn: {{ powerOn }}<br />
       connected: {{ connected }}<br />
       connectionError: {{ connectionError }}<br />
@@ -90,6 +91,7 @@ const Connection = {
       networkUpdated: {{ networkUpdated }}<br />
       <br />
       <br />
+      -->
 
       <b-card header-class="warningheader" v-if="!connected" header="Web3 Connection Not Detected">
         <b-card-text>
@@ -158,6 +160,7 @@ const Connection = {
       lastBlockTimeDiff: "establishing network connection",
       reschedule: false,
       refreshNow: false,
+      listenersInstalled: false,
     }
   },
   computed: {
@@ -231,20 +234,6 @@ const Connection = {
       if (this.powerOn) {
         if (!window.ethereum.isConnected() || !window.ethereum['isUnlocked']) {
             logDebug("Connection", "execWeb3() requesting accounts");
-            //       // function handleAccountsChanged(accounts) {
-            //       //   logDebug("Connection", "execWeb3() handleAccountsChanged: " + accounts);
-            //       //   this.refreshNow = true;
-            //       // }
-            //       // window.ethereum.on('accountsChanged', handleAccountsChanged);
-            //       // function handleChainChanged(_chainId) {
-            //       //   logDebug("Connection", "execWeb3() handleChainChanged: " + _chainId);
-            //       //   // We recommend reloading the page, unless you must do otherwise
-            //       //   console.log('Ethereum chain changed. Reloading as recommended.')
-            //       //   // chainId = _chainId
-            //       //   alert('Ethereum chain has changed. We will reload the page as recommended.')
-            //       //   window.location.reload()
-            //       // }
-            //       // window.ethereum.on('chainChanged', handleChainChanged);
             try {
               const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
               logDebug("Connection", "execWeb3() accounts: " + JSON.stringify(accounts));
@@ -257,6 +246,24 @@ const Connection = {
               store.dispatch('connection/setConnected', false);
               store.dispatch('connection/setConnectionError', 'Web3 account not permissioned');
             }
+        }
+        if (this.connected && !this.listenersInstalled) {
+          logInfo("Connection", "execWeb3() Installing listeners");
+          function handleChainChanged(_chainId) {
+            logInfo("Connection", "execWeb3() handleChainChanged: " + _chainId);
+            // We recommend reloading the page, unless you must do otherwise
+            // console.log('Ethereum chain changed. Reloading as recommended.')
+            // chainId = _chainId
+            alert('Ethereum chain has changed. We will reload the page as recommended.')
+            window.location.reload();
+          }
+          window.ethereum.on('chainChanged', handleChainChanged);
+          function handleAccountsChanged(accounts) {
+            logInfo("Connection", "execWeb3() handleAccountsChanged: " + accounts);
+            this.refreshNow = true;
+          }
+          window.ethereum.on('accountsChanged', handleAccountsChanged);
+          this.listenersInstalled = true;
         }
         if (this.connected) {
           logDebug("Connection", "execWeb3() Getting data");
