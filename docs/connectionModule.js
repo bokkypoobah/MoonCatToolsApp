@@ -259,6 +259,20 @@ const Connection = {
       if (this.powerOn) {
         if (!window.ethereum.isConnected() || !window.ethereum['isUnlocked']) {
             logInfo("Connection", "execWeb3() requesting accounts");
+            //       // function handleAccountsChanged(accounts) {
+            //       //   logInfo("Connection", "execWeb3() handleAccountsChanged: " + accounts);
+            //       //   this.refreshNow = true;
+            //       // }
+            //       // window.ethereum.on('accountsChanged', handleAccountsChanged);
+            //       // function handleChainChanged(_chainId) {
+            //       //   logInfo("Connection", "execWeb3() handleChainChanged: " + _chainId);
+            //       //   // We recommend reloading the page, unless you must do otherwise
+            //       //   console.log('Ethereum chain changed. Reloading as recommended.')
+            //       //   // chainId = _chainId
+            //       //   alert('Ethereum chain has changed. We will reload the page as recommended.')
+            //       //   window.location.reload()
+            //       // }
+            //       // window.ethereum.on('chainChanged', handleChainChanged);
             try {
               const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
               logInfo("Connection", "execWeb3() accounts: " + JSON.stringify(accounts));
@@ -301,179 +315,19 @@ const Connection = {
         }
       }
 
-    //   if (!this.connectedstore.getters['connection/connection'] || !store.getters['connection/connection'].connected) {
-    //     logDebug("Connection", "execWeb3() Attempting connection");
-    //
-    //     // logInfo("Connection", "execWeb3() window.ethereum: " + JSON.stringify(window.ethereum));
-    //     if (!window.ethereum) {
-    //       if (this.connected) {
-    //         store.dispatch('connection/setConnected', false);
-    //       }
-    //       if (this.connectionError != 'Web3 not detected') {
-    //         store.dispatch('connection/setConnectionError', 'Web3 not detected');
-    //       }
-    //     } else {
-    //       if (!window.ethereum.isConnected() || !window.ethereum['isUnlocked']) {
-    //           // window.ethereum.enable();
-    //           const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-    //           // logInfo("Connection", "execWeb3() accounts: " + JSON.stringify(accounts));
-    //       }
-    //       // // Following does not work
-    //       // // // For now, 'eth_accounts' will continue to always return an array
-    //       // function handleAccountsChanged(accounts) {
-    //       //   logInfo("Connection", "execWeb3() handleAccountsChanged: " + accounts);
-    //       //   this.refreshNow = true;
-    //       // }
-    //       // window.ethereum.on('accountsChanged', handleAccountsChanged);
-    //       // function handleChainChanged(_chainId) {
-    //       //   logInfo("Connection", "execWeb3() handleChainChanged: " + _chainId);
-    //       //   // We recommend reloading the page, unless you must do otherwise
-    //       //   console.log('Ethereum chain changed. Reloading as recommended.')
-    //       //   // chainId = _chainId
-    //       //   alert('Ethereum chain has changed. We will reload the page as recommended.')
-    //       //   window.location.reload()
-    //       // }
-    //       // window.ethereum.on('chainChanged', handleChainChanged);
-    //     }
-    //     // logInfo("Connection", "execWeb3() ethereum: " + JSON.stringify(ethereum));
-    //     // logInfo("Connection", "execWeb3() ethereum.isConnected(): " + window.ethereum.isConnected());
-    //
-    //     try {
-    //       logInfo("Connection", "execWeb3() provider before");
-    //       const provider = new ethers.providers.Web3Provider(window.ethereum);
-    //       logInfo("Connection", "execWeb3() provider after: " + JSON.stringify(provider).substring(0, 50));
-    //       // console.table(provider);
-    //       // const block = await provider.getBlock();
-    //       // store.dispatch('connection/setBlock', block);
-    //       const signer = provider.getSigner()
-    //       // console.table(signer);
-    //       const network = await provider.getNetwork();
-    //       // console.table(network);
-    //       const coinbase = await signer.getAddress();
-    //       // console.table(coinbase);
-    //       const balance = await provider.getBalance(coinbase);
-    //       console.table(ethers.utils.formatUnits(balance, 18));
-    //       // console.table(this);
-    //     } catch (e) {
-    //       console.log("Error");
-    //     }
-    //
-    //     if (false && this.provider == null) {
-    //       try {
-    //         this.provider = new ethers.providers.Web3Provider(window.ethereum);
-    //         logInfo("Connection", "execWeb3() provider: " + JSON.stringify(this.provider));
-    //
-    //         // this.provider.on("block", (blockNumber) => {
-    //         //     logInfo("Connection", "block updated: " + JSON.stringify(blockNumber));
-    //         //     this.refreshNow = true;
-    //         // });
-    //
-    //         // this.signer = this.provider.getSigner();
-    //         // logInfo("Connection", "execWeb3() signer: " + JSON.stringify(this.signer));
-    //         store.dispatch('connection/setConnectedOld', { provider: this.provider, /*signer: this.signer, */ connectionType: "MetaMask / Modern dapp browsers" });
-    //       } catch (error) {
-    //         logInfo("Connection", "execWeb3() provider - error: JSON.stringify(this.provider)");
-    //         store.dispatch('connection/setDisconnected', JSON.stringify(error.message));
-    //         this.provider = null;
-    //         this.signer = null;
-    //       }
-    //     }
-    //   }
-    //
-    //   var networkChanged = false;
-    //   if (false && store.getters['connection/connection'] && store.getters['connection/connection'].connected) {
-    //     try {
-    //       let network = await this.provider.getNetwork();
-    //       logDebug("Connection", "execWeb3() network: " + JSON.stringify(network));
-    //       if (network.chainId != this.lastNetworkChainId) {
-    //         store.dispatch('connection/setNetwork', network);
-    //         logDebug("Connection", "execWeb3() Network updated from " + this.lastNetworkChainId + " to " + network.chainId + ": " + getNetworkDetails(network.chainId).name);
-    //         this.lastNetworkChainId = network.chainId;
-    //         networkChanged = true;
-    //       }
-    //     } catch (error) {
-    //       store.dispatch('connection/setDisconnected', JSON.stringify(error.message));
-    //     }
-    //   }
-    //
-    //   var coinbaseChanged = false;
-    //   var coinbase = null;
-    //   if (false && store.getters['connection/connection'] && store.getters['connection/connection'].connected) {
-    //     try {
-    //       coinbase = await this.signer.getAddress();
-    //       // const name = await this.provider.lookupAddress(coinbase);
-    //       // logInfo("Connection", "execWeb3() coinbase: " + JSON.stringify(coinbase) + " => " + name);
-    //       // const allnames = await ReverseRecords.getNames(['coinbase']);
-    //       // logInfo("Connection", "execWeb3() allnames: " + JSON.stringify(allnames));
-    //       if (coinbase != this.lastCoinbase) {
-    //         store.dispatch('connection/setCoinbase', coinbase);
-    //         logDebug("Connection", "execWeb3() Coinbase updated from " + this.lastCoinbase + " to " + coinbase);
-    //         this.lastCoinbase = coinbase;
-    //         coinbaseChanged = true;
-    //       }
-    //     } catch (error) {
-    //       store.dispatch('connection/setDisconnected', JSON.stringify(error.message));
-    //     }
-    //   }
-    //
-    //   var balance = null;
-    //   if (false && store.getters['connection/connection'] && store.getters['connection/connection'].connected) {
-    //     if (coinbase != null) {
-    //       try {
-    //         balance = await this.provider.getBalance(coinbase);
-    //         // logDebug("Connection", "execWeb3() balance: " + ethers.utils.formatUnits(balance, 18));
-    //         if (this.lastBalance == null || balance == null || !balance.eq(this.lastBalance)) {
-    //           store.dispatch('connection/setBalance', balance);
-    //           logDebug("Connection", "execWeb3() Coinbase balance updated from " + (this.lastBalance == null ? "null" : ethers.utils.formatUnits(this.lastBalance)) + " to " + (balance == null ? "null" : ethers.utils.formatUnits(balance)));
-    //           this.lastBalance = balance;
-    //         }
-    //       } catch (error) {
-    //         store.dispatch('connection/setDisconnected', JSON.stringify(error.message));
-    //         balance = null;
-    //       }
-    //     }
-    //   }
-    //
-    //   var block = null;
-    //   if (false && store.getters['connection/connection'] && store.getters['connection/connection'].connected) {
-    //     try {
-    //       block = await this.provider.getBlock();
-    //       // logDebug("Connection", "execWeb3() block: " + JSON.stringify(block.number));
-    //     } catch (error) {
-    //       store.dispatch('connection/setDisconnected', JSON.stringify(error.message));
-    //     }
-    //   }
-    //   var blockChanged = false;
-    //   if (block == null) {
-    //     if (this.lastBlockHash != null) {
-    //       store.dispatch('connection/setBlock', null);
-    //       logDebug("Connection", "execWeb3() Block hash updated from " + this.lastBlockHash + " to " + null);
-    //       this.lastBlockHash = null;
-    //       blockChanged = true;
-    //     }
-    //   } else {
-    //     if (block.hash !== this.lastBlockHash) {
-    //       store.dispatch('connection/setBlock', block);
-    //       logDebug("Connection", "execWeb3() Block updated from " + (this.lastBlockHash ? this.lastBlockHash.substring(0, 10) : null) + " to " + (block.hash ? block.hash.substring(0, 10) : null) + " @ " + block.number + " " + new Date(block.timestamp * 1000).toLocaleString() + " " + getTimeDiff(block.timestamp));
-    //       this.lastBlockHash = block.hash;
-    //       blockChanged = true;
-    //     }
-    //   }
-    //
-    //   if (false && store.getters['connection/connection'] && store.getters['connection/connection'].connected) {
-    //     store.dispatch('tokens/execWeb3', { count: this.count, networkChanged, blockChanged, coinbaseChanged });
-    //   //   // await store.dispatch('tokenContract/execWeb3', { count: this.count, networkChanged, blockChanged, coinbaseChanged });
-    //   //   // if (this.$route.name == "DeployTokenContract") {
-    //   //   //   await store.dispatch('deployTokenContract/execWeb3', { count: this.count, networkChanged, blockChanged, coinbaseChanged });
-    //   //   // } else if (this.$route.name == "TokenContractExplorer" /* || this.$route.name == "GoblokStatus" */) {
-    //   //   //   await store.dispatch('tokenContractExplorer/execWeb3', { count: this.count, networkChanged, blockChanged, coinbaseChanged });
-    //   //   // }
-    //   }
-    // }
+      // if (false && store.getters['connection/connection'] && store.getters['connection/connection'].connected) {
+        store.dispatch('tokens/execWeb3', { count: this.count });
+        // await store.dispatch('tokenContract/execWeb3', { count: this.count, networkChanged, blockChanged, coinbaseChanged });
+        // if (this.$route.name == "DeployTokenContract") {
+        //   await store.dispatch('deployTokenContract/execWeb3', { count: this.count, networkChanged, blockChanged, coinbaseChanged });
+        // } else if (this.$route.name == "TokenContractExplorer" /* || this.$route.name == "GoblokStatus" */) {
+        //   await store.dispatch('tokenContractExplorer/execWeb3', { count: this.count, networkChanged, blockChanged, coinbaseChanged });
+        // }
+      // }
       logInfo("Connection", "execWeb3() end[" + this.count + "]");
     },
     async timeoutCallback() {
-      if (this.count++ % 5 == 0 || this.refreshNow) {
+      if (this.count++ % 15 == 0 || this.refreshNow) {
         await this.execWeb3();
         if (this.refreshNow) {
           this.refreshNow = false;

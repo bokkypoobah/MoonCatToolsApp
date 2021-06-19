@@ -455,11 +455,15 @@ const tokensModule = {
       context.commit('updateSelectedId', selectedId);
     },
     // Called by Connection.execWeb3()
-    async execWeb3({ state, commit, rootState }, { count, networkChanged, blockChanged, coinbaseChanged }) {
-      logDebug("tokensModule", "execWeb3() start[" + count + ", " + JSON.stringify(rootState.route.params) + ", " + networkChanged + ", " + blockChanged + ", " + coinbaseChanged+ "]");
+    async execWeb3({ state, commit, rootState }, { count }) {
+      const networkUpdated = store.getters['connection/networkUpdated'];
+      const blockUpdated = store.getters['connection/blockUpdated'];
+      const coinbaseUpdated = store.getters['connection/coinbaseUpdated'];
+
+      logInfo("tokensModule", "execWeb3() start[" + count + ", " + JSON.stringify(rootState.route.params) + ", " + networkUpdated + ", " + blockUpdated + ", " + coinbaseUpdated+ "]");
       if (!state.executing) {
         commit('updateExecuting', true);
-        logDebug("tokensModule", "execWeb3() executing[" + count + ", " + JSON.stringify(rootState.route.params) + ", " + networkChanged + ", " + blockChanged + ", " + coinbaseChanged + "]");
+        logDebug("tokensModule", "execWeb3() executing[" + count + ", " + JSON.stringify(rootState.route.params) + ", " + networkUpdated + ", " + blockUpdated + ", " + coinbaseUpdated + "]");
 
         var paramsChanged = false;
         if (state.params != rootState.route.params.param) {
@@ -468,7 +472,7 @@ const tokensModule = {
           commit('updateParams', rootState.route.params.param);
         }
 
-        if (networkChanged || blockChanged || coinbaseChanged || paramsChanged) {
+        if (networkUpdated || blockUpdated || coinbaseUpdated || paramsChanged) {
 
           // You can also use an ENS name for the contract address
           const nftAddress = "token.zombiebabies.eth"; // state.nftData.nftAddress;
@@ -494,22 +498,26 @@ const tokensModule = {
           //   "event Transfer(address indexed from, address indexed to, uint amount)"
           // ];
 
-          // store.getters['connection/coinbase']
-          const name = await store.getters['connection/connection'].provider.lookupAddress(store.getters['connection/coinbase']);
-          logDebug("tokensModule", "execWeb3() coinbase: " + JSON.stringify(store.getters['connection/coinbase']) + " => " + name);
+          const coinbase = store.getters['connection/coinbase'];
+          logInfo("tokensModule", "execWeb3() coinbase: " + coinbase);
+          const provider = new ethers.providers.Web3Provider(window.ethereum);
+          console.table(provider);
+          const name = await provider.lookupAddress(coinbase);
+          logInfo("tokensModule", "execWeb3() coinbase: " + JSON.stringify(store.getters['connection/coinbase']) + " => " + name);
 
-          // // const allnames = await ReverseRecords.getNames(['coinbase']);
-          // // logDebug("Connection", "execWeb3() allnames: " + JSON.stringify(allnames));
-          const addresses = [ "0x07fb31ff47Dc15f78C5261EEb3D711fb6eA985D1", "0x000001f568875F378Bf6d170B790967FE429C81A", "0xBeeef66749B64Afe43Bbc9475635Eb510cFE4922"];
-          const ensReverseRecordsContract = new ethers.Contract(ENSREVERSERECORDSADDRESS, ENSREVERSERECORDSABI, store.getters['connection/connection'].provider);
-          const allnames = await ensReverseRecordsContract.getNames(addresses);
-          logDebug("tokensModule", "execWeb3() allnames: " + JSON.stringify(addresses) + " => " + allnames);
-          const validNames = allnames.filter((n) => normalize(n) === n );
-          logDebug("tokensModule", "execWeb3() validNames: " + JSON.stringify(addresses) + " => " + validNames);
-
-          const beeeefRegistryContract = new ethers.Contract(BEEEEFREGISTRYENS, BEEEEFREGISTRYABI, store.getters['connection/connection'].provider);
+          const beeeefRegistryContract = new ethers.Contract(BEEEEFREGISTRYENS, BEEEEFREGISTRYABI, provider);
           const entries = await beeeefRegistryContract.getEntries();
-          logDebug("tokensModule", "execWeb3() beeeefRegistryContract.entries: " + JSON.stringify(entries));
+          logInfo("tokensModule", "execWeb3() beeeefRegistryContract.entries: " + JSON.stringify(entries));
+
+
+          const addresses = [ "0x07fb31ff47Dc15f78C5261EEb3D711fb6eA985D1", "0x000001f568875F378Bf6d170B790967FE429C81A", "0xBeeef66749B64Afe43Bbc9475635Eb510cFE4922"];
+          const ensReverseRecordsContract = new ethers.Contract(ENSREVERSERECORDSADDRESS, ENSREVERSERECORDSABI, provider);
+          const allnames = await ensReverseRecordsContract.getNames(addresses);
+          logInfo("tokensModule", "execWeb3() allnames: " + JSON.stringify(addresses) + " => " + allnames);
+          const validNames = allnames.filter((n) => normalize(n) === n );
+          logInfo("tokensModule", "execWeb3() validNames: " + JSON.stringify(addresses) + " => " + validNames);
+
+          if (false) {
 
           //
           // // The Contract object
@@ -530,7 +538,7 @@ const tokensModule = {
           const cryptoPunksMarketContract = new ethers.Contract(CRYPTOPUNKMARKETADDRESS, CRYPTOPUNKMARKETABI, store.getters['connection/connection'].provider);
           const cpBalanceOf = await cryptoPunksMarketContract.balanceOf(store.getters['connection/coinbase']);
           logDebug("tokensModule", "execWeb3() cpBalanceOf: " + cpBalanceOf);
-
+          }
 
           // Direct query. Could deploy contract to perform multicall
           // for (let i = 0; i < 10000; i++) {
@@ -646,9 +654,9 @@ const tokensModule = {
           // }
         }
         commit('updateExecuting', false);
-        logDebug("tokensModule", "execWeb3() end[" + count + ", " + networkChanged + ", " + blockChanged + ", " + coinbaseChanged + "]");
+        logDebug("tokensModule", "execWeb3() end[" + count + ", " + networkUpdated + ", " + blockUpdated + ", " + coinbaseUpdated + "]");
       } else {
-        logDebug("tokensModule", "execWeb3() already executing[" + count + ", " + networkChanged + ", " + blockChanged + ", " + coinbaseChanged + "]");
+        logDebug("tokensModule", "execWeb3() already executing[" + count + ", " + networkUpdated + ", " + blockUpdated + ", " + coinbaseUpdated + "]");
       }
     },
   },
