@@ -106,13 +106,13 @@ const Connection = {
             </b-col>
           </b-row>
           <b-row>
-            <b-col cols="4" class="small">My account</b-col>
+            <b-col cols="4" class="small">Wallet</b-col>
             <b-col class="small truncate" cols="8">
               <b-link :href="explorer + 'address/' + coinbase" class="card-link" target="_blank">{{ coinbase == null ? '' : (coinbase.substring(0, 10) + '...') }}</b-link><span class="float-right"><b-link v-b-popover.hover="'View on OpenSea.io'" :href="'https://opensea.io/accounts/'+ coinbase" target="_blank"><img src="images/381114e-opensea-logomark-flat-colored-blue.png" width="20px" /></b-link> <b-link :href="'https://rarible.com/user/'+ coinbase" v-b-popover.hover="'View on Rarible.com'" target="_blank"><img src="images/rarible_feb7c08ba34c310f059947d23916f76c12314e85.png" height="20px" /></b-link></span>
             </b-col>
           </b-row>
           <b-row>
-            <b-col cols="4" class="small">My balance</b-col><b-col class="small truncate" cols="8"><b-link :href="explorer + 'address/' + coinbase" class="card-link" target="_blank">{{ balanceString }}</b-link></b-col>
+            <b-col cols="4" class="small">Balance</b-col><b-col class="small truncate" cols="8"><b-link :href="explorer + 'address/' + coinbase" class="card-link" target="_blank">{{ balanceString }}</b-link></b-col>
           </b-row>
           <b-row v-show="Object.keys(faucets).length">
             <b-col cols="4" class="small">Faucet(s)</b-col>
@@ -230,14 +230,14 @@ const Connection = {
 
       if (this.powerOn) {
         if (!window.ethereum.isConnected() || !window.ethereum['isUnlocked']) {
-            logInfo("Connection", "execWeb3() requesting accounts");
+            logDebug("Connection", "execWeb3() requesting accounts");
             //       // function handleAccountsChanged(accounts) {
-            //       //   logInfo("Connection", "execWeb3() handleAccountsChanged: " + accounts);
+            //       //   logDebug("Connection", "execWeb3() handleAccountsChanged: " + accounts);
             //       //   this.refreshNow = true;
             //       // }
             //       // window.ethereum.on('accountsChanged', handleAccountsChanged);
             //       // function handleChainChanged(_chainId) {
-            //       //   logInfo("Connection", "execWeb3() handleChainChanged: " + _chainId);
+            //       //   logDebug("Connection", "execWeb3() handleChainChanged: " + _chainId);
             //       //   // We recommend reloading the page, unless you must do otherwise
             //       //   console.log('Ethereum chain changed. Reloading as recommended.')
             //       //   // chainId = _chainId
@@ -247,11 +247,11 @@ const Connection = {
             //       // window.ethereum.on('chainChanged', handleChainChanged);
             try {
               const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-              logInfo("Connection", "execWeb3() accounts: " + JSON.stringify(accounts));
+              logDebug("Connection", "execWeb3() accounts: " + JSON.stringify(accounts));
               store.dispatch('connection/setConnected', true);
-              logInfo("Connection", "execWeb3() setConnected done");
+              logDebug("Connection", "execWeb3() setConnected done");
               store.dispatch('connection/setConnectionError', null);
-              logInfo("Connection", "execWeb3() setConnectionError done");
+              logDebug("Connection", "execWeb3() setConnectionError done");
             } catch (e) {
               logError("Connection", "execWeb3() error: " + JSON.stringify(e.message));
               store.dispatch('connection/setConnected', false);
@@ -259,7 +259,7 @@ const Connection = {
             }
         }
         if (this.connected) {
-          logInfo("Connection", "execWeb3() Getting data");
+          logDebug("Connection", "execWeb3() Getting data");
           try {
             const provider = new ethers.providers.Web3Provider(window.ethereum);
             const network = await provider.getNetwork();
@@ -287,8 +287,8 @@ const Connection = {
         }
       }
 
+      store.dispatch('tokens/execWeb3', { count: this.count });
       // if (false && store.getters['connection/connection'] && store.getters['connection/connection'].connected) {
-        store.dispatch('tokens/execWeb3', { count: this.count });
         // await store.dispatch('tokenContract/execWeb3', { count: this.count, networkChanged, blockChanged, coinbaseChanged });
         // if (this.$route.name == "DeployTokenContract") {
         //   await store.dispatch('deployTokenContract/execWeb3', { count: this.count, networkChanged, blockChanged, coinbaseChanged });
@@ -296,7 +296,7 @@ const Connection = {
         //   await store.dispatch('tokenContractExplorer/execWeb3', { count: this.count, networkChanged, blockChanged, coinbaseChanged });
         // }
       // }
-      logInfo("Connection", "execWeb3() end[" + this.count + "]");
+      logDebug("Connection", "execWeb3() end[" + this.count + "]");
     },
     async timeoutCallback() {
       if (this.count++ % 15 == 0 || this.refreshNow) {
@@ -327,15 +327,15 @@ const Connection = {
     }
   },
   mounted() {
-    logDebug("Connection", "mounted() Called");
+    logDebug("Connection", "mounted()");
     this.reschedule = true;
     var t = this;
     setTimeout(function() {
       t.timeoutCallback();
-    }, 1000);
+    }, 500);
   },
   destroyed() {
-    logDebug("Connection", "destroyed() Called");
+    logDebug("Connection", "destroyed()");
     this.reschedule = false;
   },
 };
@@ -380,25 +380,25 @@ const connectionModule = {
   },
   mutations: {
     setPowerOn(state, powerOn) {
-      logInfo("connectionModule", "mutations.setPowerOn(" + powerOn + ")");
+      logDebug("connectionModule", "mutations.setPowerOn(" + powerOn + ")");
       state.powerOn = powerOn;
     },
     setConnected(state, connected) {
-      logInfo("connectionModule", "mutations.setConnected(" + connected + ")");
+      logDebug("connectionModule", "mutations.setConnected(" + connected + ")");
       state.connected = connected;
     },
     setConnectionError(state, error) {
-      logInfo("connectionModule", "mutations.setConnectionError(" + error + ")");
+      logDebug("connectionModule", "mutations.setConnectionError(" + error + ")");
       state.connectionError = error;
     },
     setNetwork(state, network) {
-      logInfo("connectionModule", "mutations.setNetwork() - networkName: " + network.chainId);
+      logDebug("connectionModule", "mutations.setNetwork() - networkName: " + network.chainId);
       if (state.network == null || state.network.chainId != network.chainId) {
-        logInfo("connectionModule", "mutations.setNetwork() - networkName: " + network.chainId + " updated");
+        logDebug("connectionModule", "mutations.setNetwork() - networkName: " + network.chainId + " updated");
         state.network = network;
         var networkDetails = getNetworkDetails(network.chainId);
         state.networkName = networkDetails.name;
-        logInfo("connectionModule", "mutations.setNetwork() - networkName: " + state.networkName);
+        logDebug("connectionModule", "mutations.setNetwork() - networkName: " + state.networkName);
         state.explorer = networkDetails.explorer;
         state.faucets = networkDetails.faucets;
         state.networkUpdated = true;
@@ -409,9 +409,9 @@ const connectionModule = {
       }
     },
     setCoinbase(state, coinbase) {
-      logInfo("connectionModule", "mutations.setCoinbase(" + coinbase + ")");
+      logDebug("connectionModule", "mutations.setCoinbase(" + coinbase + ")");
       if (coinbase != state.coinbase) {
-        logInfo("connectionModule", "mutations.setCoinbase(" + coinbase + ") updated");
+        logDebug("connectionModule", "mutations.setCoinbase(" + coinbase + ") updated");
         state.coinbase = coinbase;
         state.coinbaseUpdated = true;
       } else {
@@ -426,7 +426,7 @@ const connectionModule = {
     setBlock(state, block) {
       logDebug("connectionModule", "mutations.setBlock()");
       if (block == null) {
-        logInfo("connectionModule", "actions.setBlock - block == null");
+        logDebug("connectionModule", "actions.setBlock - block == null");
         if (state.block != null) {
           state.block = block;
           state.blockUpdated = true;
@@ -434,40 +434,40 @@ const connectionModule = {
       } else {
         if (state.block == null || block.hash != state.block.hash) {
           state.block = block;
-          logInfo("connectionModule", "mutations.setBlock - state.blockUpdated set to true");
+          logDebug("connectionModule", "mutations.setBlock - state.blockUpdated set to true");
           state.blockUpdated = true;
         } else {
           if (state.blockUpdated) {
-            logInfo("connectionModule", "mutations.setBlock - state.blockUpdated set to false");
+            logDebug("connectionModule", "mutations.setBlock - state.blockUpdated set to false");
             state.blockUpdated = false;
           }
         }
       }
     },
     addTx(state, tx) {
-      logInfo("connectionModule", "mutations.addTx(): " + tx);
+      logDebug("connectionModule", "mutations.addTx(): " + tx);
       Vue.set(state.txs, tx, tx);
     },
     removeTx(state, tx) {
-      logInfo("connectionModule", "mutations.removeTx(): " + tx);
+      logDebug("connectionModule", "mutations.removeTx(): " + tx);
       Vue.delete(state.txs, tx);
     },
     setTxError(state, txError) {
-      logInfo("connectionModule", "mutations.setTxError(): " + txError);
+      logDebug("connectionModule", "mutations.setTxError(): " + txError);
       state.txError = txError;
     },
   },
   actions: {
     setPowerOn(context, powerOn) {
-      logInfo("connectionModule", "actions.setPowerOn(" + powerOn + ")");
+      logDebug("connectionModule", "actions.setPowerOn(" + powerOn + ")");
       context.commit('setPowerOn', powerOn);
     },
     setConnected(context, connected) {
-      logInfo("connectionModule", "actions.setConnected(" + connected + ")");
+      logDebug("connectionModule", "actions.setConnected(" + connected + ")");
       context.commit('setConnected', connected);
     },
     setConnectionError(context, error) {
-      logInfo("connectionModule", "actions.setConnectionError(" + error + ")");
+      logDebug("connectionModule", "actions.setConnectionError(" + error + ")");
       context.commit('setConnectionError', error);
     },
     setNetwork(context, n) {
@@ -480,7 +480,7 @@ const connectionModule = {
       context.commit('setBalance', b);
     },
     setBlock(context, block) {
-      logInfo("connectionModule", "actions.setBlock()");
+      logDebug("connectionModule", "actions.setBlock()");
       context.commit('setBlock', block);
     },
     addTx(context, tx) {
