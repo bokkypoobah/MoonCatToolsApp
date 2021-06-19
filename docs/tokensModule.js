@@ -78,16 +78,15 @@ const Tokens = {
 
       // this.count++;
 
-      // logInfo("Tokens", "before tokens/loadLibrary");
-      // TODO
-      // await store.dispatch('tokens/loadLibrary');
-      // logInfo("Tokens", "after tokens/loadLibrary");
+      logInfo("Tokens", "before tokens/loadLibrary");
+      await store.dispatch('tokens/loadLibrary');
+      logInfo("Tokens", "after tokens/loadLibrary");
 
       var t = this;
       if (this.reschedule) {
         setTimeout(function() {
           t.timeoutCallback();
-        }, 1000);
+        }, 600000);
       }
     },
   },
@@ -313,7 +312,7 @@ const tokensModule = {
   },
   actions: {
     async loadLibrary(context) {
-      logDebug("tokensModule", "actions.loadLibrary()");
+      logInfo("tokensModule", "actions.loadLibrary()");
 
       // const defaultRegistryEntries = [
       //   ["0xBeeef66749B64Afe43Bbc9475635Eb510cFE4922", "0xBeeef66749B64Afe43Bbc9475635Eb510cFE4922", "0xBEEEf7786F0681Dd80651e4F05253dB8C9Fb74d1", "0x00000217d2795F1Da57e392D2a5bC87125BAA38D"],
