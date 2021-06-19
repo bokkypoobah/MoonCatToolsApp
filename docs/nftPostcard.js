@@ -10,14 +10,24 @@ const NFTPostcard = {
 
 
               <b-card-group deck class="m-0">
-                <div v-for="(catId, rescueIndex) in catIds.slice(0, 50)">
-                  <b-card body-class="p-1" header-class="p-2" footer-class="p-2" img-top class="m-1 p-0">
+                <div v-for="(catId, rescueIndex) in catIds.slice(0, 36)">
+                  <!-- center -->
+                  <!--
+                  <b-card :img-src="generateMoonCatImage(catId, 1)" img-alt="Card image" style="width: 10rem; height: 10rem;" img-bottom>
+                  </b-card>
+                  -->
+
+                  <b-card body-class="p-1 d-flex align-items-end justify-content-center" img-bottom img-center header-class="p-2" footer-class="p-2" style="width: 10rem; height: 10rem;" img-top class="m-1 p-0 text-center text-bottom position-relative">
                     <template #header>
                       <span variant="secondary" class="small truncate">
                         {{ rescueIndex + ':' + catId }}
                       </span>
                     </template>
-                    <img :src="generateMoonCatImage(catId, 5)" />
+                    <img :src="generateMoonCatImage(catId, 4)" />
+                    <!-- <b-img style="object-fit: scale-down; " :src="generateMoonCatImage(catId, 4)" /> -->
+                    <!-- <b-avatar rounded="sm" style="object-fit: contain; " size="10em" variant="info" :src="generateMoonCatImage(catId, 3)" class="mr-3"></b-avatar> -->
+                    <!-- <b-img-lazy :src="generateMoonCatImage(catId, 4)"></b-img-lazy> -->
+                    <!-- <b-card-img bottom height="100px" :src="generateMoonCatImage(catId, 1)"></b-card-img> -->
 
                     <!--
                     <b-link @click="addAsset(asset)" v-b-popover.hover="'Click to add image to the canvas'">
@@ -508,7 +518,7 @@ const NFTPostcard = {
     generateMoonCatImage(catId, size) {
       size = size || 10;
       var data = mooncatparser(catId);
-      console.log(JSON.stringify(data));
+      // console.log(JSON.stringify(data));
       var canvas = document.createElement("canvas");
       canvas.width = size * data.length;
       canvas.height = size * data[1].length;
