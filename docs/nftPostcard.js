@@ -1,7 +1,7 @@
 const NFTPostcard = {
   template: `
     <div class="mt-5 pt-3">
-      <b-card no-body header="NFTPostcard" class="border-0" header-class="p-1">
+      <b-card no-body header="Blah" class="border-0" header-class="p-1">
         <b-card no-body class="border-0 m-0 mt-2">
           <b-card-body class="p-0">
 
@@ -9,6 +9,8 @@ const NFTPostcard = {
 
               <b-row class="mb-3">
                 <b-col md="8" class="p-3">
+                  {{ getMoonCatDetailsByRescueOrders[100] }}
+
                   <div id="toBeCaptured">
                     <canvas id="thecanvas" width="1024" height="480" style="border:1px solid; margin: 0 auto; position: absolute;"></canvas>
                   </div>
@@ -350,6 +352,9 @@ const NFTPostcard = {
     }
   },
   computed: {
+    getMoonCatDetailsByRescueOrders() {
+      return moonCatDetailsByRescueOrders;
+    },
     powerOn() {
       return store.getters['connection/powerOn'];
     },
