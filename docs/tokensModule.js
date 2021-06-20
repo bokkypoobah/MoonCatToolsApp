@@ -547,7 +547,6 @@ const tokensModule = {
             const entries = await beeeefRegistryContract.getEntries();
             logInfo("tokensModule", "execWeb3() beeeefRegistryContract.entries: " + JSON.stringify(entries));
 
-
             const addresses = [ "0x07fb31ff47Dc15f78C5261EEb3D711fb6eA985D1", "0x000001f568875F378Bf6d170B790967FE429C81A", "0xBeeef66749B64Afe43Bbc9475635Eb510cFE4922"];
             const ensReverseRecordsContract = new ethers.Contract(ENSREVERSERECORDSADDRESS, ENSREVERSERECORDSABI, provider);
             const allnames = await ensReverseRecordsContract.getNames(addresses);

@@ -10,21 +10,39 @@ const NFTPostcard = {
               <b-button @click="loadCatData">Load Cat Data</b-button>
 
               <b-card-group deck class="m-0">
-                <div v-for="(catId, rescueIndex) in catIds.slice(0, 36)">
+                <div v-for="(catId, rescueIndex) in catIds.slice(720, 723)">
                   <!-- center -->
                   <!--
                   <b-card :img-src="generateMoonCatImage(catId, 1)" img-alt="Card image" style="width: 10rem; height: 10rem;" img-bottom>
                   </b-card>
                   -->
 
-                  <b-card body-class="p-3 d-flex align-items-end justify-content-center" img-bottom img-center header-class="p-2" footer-class="p-2" style="width: 10rem; height: 10rem;" img-top class="m-1 p-0 text-center text-bottom position-relative">
+                  <b-card body-class="p-3 d-flex align-items-end justify-content-center" img-bottom img-center header-class="p-2" footer-class="p-2" style="width: 10rem; height: 14rem;" img-top class="m-1 p-0 text-center text-bottom position-relative">
                     <template #header>
                       <span variant="secondary" class="small truncate">
-                        {{ rescueIndex + ':' + catId }}
+                        {{ getHeader(rescueIndex) }}
                       </span>
                     </template>
                     <!-- <img :src="generateMoonCatImage(catId, 4)" /> -->
                     <img width="75%" :src="'https://api.mooncat.community/glow-image/' + catId" />
+                    <template #footer>
+                      {{ getFooter(rescueIndex) }}
+
+                      Blah
+
+                      <!-- {{ moonCatColours[721] }} -->
+                      <!-- {{ catIds.slice(721, 722) }} -->
+                      <!-- {{ getMoonCatDetailsByRescueOrders[721] }} -->
+
+                      <!--
+                      <span class="small truncate" v-b-popover.hover="getAssetName(asset)">
+                        {{ getAssetName(asset).substring(0, 32) }}
+                      </span>
+                      <span class="float-right">
+                        <b-link :href="asset.permalink + '?ref=0x000001f568875F378Bf6d170B790967FE429C81A'" v-b-popover.hover="'View on OpenSea.io'" target="_blank"><img src="images/381114e-opensea-logomark-flat-colored-blue.png" width="20px" /></b-link>
+                      </span>
+                      -->
+                    </template>
 
 
 
@@ -519,14 +537,36 @@ const NFTPostcard = {
     },
   },
   methods: {
+
+    getHeader(rescueIndex) {
+      return rescueIndex + ':' + CATIDS[rescueIndex];
+    },
+    getHover(rescueIndex) {
+      return "Hover: " + rescueIndex;
+    },
+    getFooter(rescueIndex) {
+      console.log(JSON.stringify(moonCatDetailsByRescueOrders[721]));
+      return JSON.stringify(moonCatDetailsByRescueOrders[721]);
+    },
+
     async loadCatData() {
+      if (!window.indexedDB) {
+        console.log("IndexedDB NOT supported");
+      } else {
+        console.log("IndexedDB supported");
+      }
+
+
+
+
+
       logInfo("NFTPostcard", "loadCatData() CATIDS.length: " + CATIDS.length);
 
       var chunkSize = 500;
       const DELAY = 1000;
       const delay = ms => new Promise(res => setTimeout(res, ms));
 
-      for (let i = 0; i < CATIDS.length && i < 100000; i += chunkSize) {
+      for (let i = 0; i < CATIDS.length && i < 1000; i += chunkSize) {
         const slice = CATIDS.slice(i, i + chunkSize);
         // logInfo("NFTPostcard", "loadCatData() slice: " + JSON.stringify(slice));
         try {
@@ -1098,6 +1138,7 @@ const NFTPostcard = {
     this.reschedule = true;
     logDebug("NFTPostcard", "Calling timeoutCallback()");
     this.timeoutCallback();
+    this.loadCatData();
     this.loadNFTs();
 
     let storedCanvas;
