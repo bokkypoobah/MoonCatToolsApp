@@ -528,29 +528,15 @@ const tokensModule = {
             // logInfo("tokensModule", "execWeb3() moonCatRescue.catIds: " + JSON.stringify(catIds));
             // console.log(JSON.stringify(catIds));
 
-            function generateMoonCatImage(catId, size) {
-              size = size || 10;
-              var data = mooncatparser(catId);
-              console.log(JSON.stringify(data));
-              var canvas = document.createElement("canvas");
-              canvas.width = size * data.length;
-              canvas.height = size * data[1].length;
-              var ctx = canvas.getContext("2d");
+            const acclimatedMoonCatRescue = new ethers.Contract(ACCLIMATEDMOONCATADDRESS, ACCLIMATEDMOONCATABI, provider);
+            const totalSupplyAcclimated = await acclimatedMoonCatRescue.totalSupply();
+            logInfo("tokensModule", "execWeb3() acclimatedMoonCatRescue.totalSupply: " + totalSupplyAcclimated.toString());
 
-              for(var i = 0; i < data.length; i++){
-                for(var j = 0; j < data[i].length; j++){
-                  var color = data[i][j];
-                  if(color){
-                    ctx.fillStyle = color;
-                    ctx.fillRect(i * size, j * size, size, size);
-                  }
-                }
-              }
-              return canvas.toDataURL();
-            }
-
-            // var data = generateMoonCatImage("0x00f9e605e3");
-            // console.log(JSON.stringify(data));
+            const wrappedMoonCatRescue = new ethers.Contract(WRAPPEDMOONCATADDRESS, WRAPPEDMOONCATABI, provider);
+            const totalSupplyWrapped = await wrappedMoonCatRescue.totalSupply();
+            logInfo("tokensModule", "execWeb3() wrappedMoonCatRescue.totalSupply: " + totalSupplyWrapped.toString());
+            const _tokenIDToCatID = await wrappedMoonCatRescue._tokenIDToCatID(0);
+            logInfo("tokensModule", "execWeb3() wrappedMoonCatRescue._tokenIDToCatID: " + _tokenIDToCatID.toString());
 
             if (false) {
             // console.table(provider);

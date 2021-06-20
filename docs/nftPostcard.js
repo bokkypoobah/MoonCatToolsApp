@@ -7,7 +7,7 @@ const NFTPostcard = {
 
             <b-container class="p-0" fluid>
 
-
+              <b-button @click="loadCatData">Load Cat Data</b-button>
 
               <b-card-group deck class="m-0">
                 <div v-for="(catId, rescueIndex) in catIds.slice(0, 36)">
@@ -23,7 +23,11 @@ const NFTPostcard = {
                         {{ rescueIndex + ':' + catId }}
                       </span>
                     </template>
-                    <img :src="generateMoonCatImage(catId, 4)" />
+                    <!-- <img :src="generateMoonCatImage(catId, 4)" /> -->
+                    <img width="75%" :src="'https://api.mooncat.community/glow-image/' + catId" />
+
+
+
                     <!-- <b-img style="object-fit: scale-down; " :src="generateMoonCatImage(catId, 4)" /> -->
                     <!-- <b-avatar rounded="sm" style="object-fit: contain; " size="10em" variant="info" :src="generateMoonCatImage(catId, 3)" class="mr-3"></b-avatar> -->
                     <!-- <b-img-lazy :src="generateMoonCatImage(catId, 4)"></b-img-lazy> -->
@@ -515,6 +519,78 @@ const NFTPostcard = {
     },
   },
   methods: {
+    async loadCatData() {
+      logInfo("NFTPostcard", "loadCatData() CATIDS.length: " + CATIDS.length);
+
+      var chunkSize = 500;
+      const DELAY = 1000;
+      const delay = ms => new Promise(res => setTimeout(res, ms));
+
+      for (let i = 0; i < CATIDS.length && i < 100000; i += chunkSize) {
+        const slice = CATIDS.slice(i, i + chunkSize);
+        // logInfo("NFTPostcard", "loadCatData() slice: " + JSON.stringify(slice));
+        try {
+          // const requests = slice.map((catId) => fetch("https://api.mooncat.community/traits/" + catId));
+          const requests = slice.map((catId) => fetch("https://api.mooncat.community/contract-details/" + catId));
+          const responses = await Promise.all(requests);
+          const errors = responses.filter((response) => !response.ok);
+          if (errors.length > 0) {
+            throw errors.map((response) => Error(response.statusText));
+          }
+          const json = responses.map((response) => response.json());
+          const data = await Promise.all(json);
+          data.forEach((datum) => console.log(datum));
+        }
+        catch (errors) {
+          errors.forEach((error) => console.error(error));
+        }
+        await delay(DELAY);
+      }
+
+      /*
+      var slice = CATIDS.slice(0, 5);
+      // logInfo("NFTPostcard", "loadCatData() slice: " + JSON.stringify(slice));
+      try {
+        const requests = slice.map((catId) => fetch("https://api.mooncat.community/traits/" + catId));
+        const responses = await Promise.all(requests);
+        const errors = responses.filter((response) => !response.ok);
+        if (errors.length > 0) {
+          throw errors.map((response) => Error(response.statusText));
+        }
+        const json = responses.map((response) => response.json());
+        const data = await Promise.all(json);
+        data.forEach((datum) => console.log(datum));
+      }
+      catch (errors) {
+        errors.forEach((error) => console.error(error));
+      }
+      */
+
+      // for (let i = 0; i < 10; i++) {
+      //   logInfo("NFTPostcard", "loadCatData() i: " + i);
+      //   const url = "https://api.mooncat.community/traits/" + i;
+      //   logInfo("NFTPostcard", "loadCatData() url:" + url);
+      //   const data = await fetch(url).then(response => response.json());
+      //   logInfo("NFTPostcard", "loadCatData() data:" + JSON.stringify(data));
+      // }
+
+
+
+      // let url = "https://api.opensea.io/api/v1/assets?owner=" + account + "&order_direction=desc&limit=" + PAGESIZE + "&offset=" + offset;
+      // logDebug("NFTPostcard", "loadAssets() url:" + url);
+      // const data = await fetch(url).then(response => response.json());
+      // if (data.assets && data.assets.length > 0) {
+      //   for (let assetIndex = 0; assetIndex < data.assets.length; assetIndex++) {
+      //     const asset = data.assets[assetIndex];
+      //     // logDebug("NFTPostcard", "loadAssets() asset(" + (parseInt(offset) + assetIndex) + ") name: " + asset.collection.name + ", slug: " + asset.collection.slug);
+      //     this.assets.push(asset);
+      //   }
+      // } else {
+      //   completed = true;
+      // }
+
+
+    },
     generateMoonCatImage(catId, size) {
       size = size || 10;
       var data = mooncatparser(catId);
