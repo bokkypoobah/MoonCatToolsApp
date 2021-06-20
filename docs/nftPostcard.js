@@ -10,7 +10,8 @@ const NFTPostcard = {
               <b-button @click="loadCatData">Load Cat Data</b-button>
 
               <b-card-group deck class="m-0">
-                <div v-for="(catId, rescueIndex) in catIds.slice(0, 36)">
+                <!-- <div v-for="(catId, rescueIndex) in catIds.slice(0, 36)"> -->
+                <div v-for="(catId, rescueIndex) in traitDataKeys">
                   <!-- center -->
                   <!--
                   <b-card :img-src="generateMoonCatImage(catId, 1)" img-alt="Card image" style="width: 10rem; height: 10rem;" img-bottom>
@@ -80,7 +81,9 @@ const NFTPostcard = {
               <b-row class="mb-3">
                 <b-col md="8" class="p-3">
 
+                  <!--
                   <img :src="generateMoonCatImage('0x00f9e605e3', 20)" />
+                  -->
 
                   <!--
                   {{ moonCatColours[0] }}
@@ -334,7 +337,7 @@ const NFTPostcard = {
       count: 0,
       reschedule: true,
 
-      traitData: { "a" : "b" },
+      traitData: {},
 
       assets: [],
 
@@ -431,6 +434,10 @@ const NFTPostcard = {
     }
   },
   computed: {
+    traitDataKeys() {
+      // console.log(JSON.stringify(Object.keys(this.traitData)));
+      return Object.keys(this.traitData);
+    },
     catIds() {
       return CATIDS;
     },
@@ -567,13 +574,13 @@ const NFTPostcard = {
 
       logInfo("NFTPostcard", "loadCatData() CATIDS.length: " + CATIDS.length);
 
-      const chunkSize = 36;
+      const chunkSize = 500;
       const DELAY = 1000;
       const delay = ms => new Promise(res => setTimeout(res, ms));
 
-      for (let i = 0; i < CATIDS.length && i < 36; i += chunkSize) {
+      for (let i = 0; i < CATIDS.length && i < 2000; i += chunkSize) {
         const slice = CATIDS.slice(i, i + chunkSize);
-        logInfo("NFTPostcard", "loadCatData() slice: " + JSON.stringify(slice));
+        // logInfo("NFTPostcard", "loadCatData() slice: " + JSON.stringify(slice));
         try {
           // logInfo("NFTPostcard", "loadCatData() url: " + "https://api.mooncat.community/traits/" + catId);
           const requests = slice.map((catId) => fetch("https://api.mooncat.community/traits/" + catId));
