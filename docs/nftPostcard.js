@@ -10,7 +10,7 @@ const NFTPostcard = {
               <b-button @click="loadCatData">Load Cat Data</b-button>
 
               <b-card-group deck class="m-0">
-                <div v-for="(catId, rescueIndex) in catIds.slice(720, 723)">
+                <div v-for="(catId, rescueIndex) in catIds.slice(0, 36)">
                   <!-- center -->
                   <!--
                   <b-card :img-src="generateMoonCatImage(catId, 1)" img-alt="Card image" style="width: 10rem; height: 10rem;" img-bottom>
@@ -20,15 +20,13 @@ const NFTPostcard = {
                   <b-card body-class="p-3 d-flex align-items-end justify-content-center" img-bottom img-center header-class="p-2" footer-class="p-2" style="width: 10rem; height: 14rem;" img-top class="m-1 p-0 text-center text-bottom position-relative">
                     <template #header>
                       <span variant="secondary" class="small truncate">
-                        {{ getHeader(rescueIndex) }}
+                        {{ getHeader(catId, rescueIndex) }}
                       </span>
                     </template>
                     <!-- <img :src="generateMoonCatImage(catId, 4)" /> -->
                     <img width="75%" :src="'https://api.mooncat.community/glow-image/' + catId" />
                     <template #footer>
-                      {{ getFooter(rescueIndex) }}
-
-                      Blah
+                      {{ getFooter(catId, rescueIndex) }}
 
                       <!-- {{ moonCatColours[721] }} -->
                       <!-- {{ catIds.slice(721, 722) }} -->
@@ -336,6 +334,8 @@ const NFTPostcard = {
       count: 0,
       reschedule: true,
 
+      traitData: { "a" : "b" },
+
       assets: [],
 
       collectionsSelected: [],
@@ -538,40 +538,47 @@ const NFTPostcard = {
   },
   methods: {
 
-    getHeader(rescueIndex) {
-      return rescueIndex + ':' + CATIDS[rescueIndex];
+    getHeader(catId, rescueIndex) {
+      const traitData = this.traitData[catId];
+      if (traitData) {
+        return traitData.name;
+      } else {
+        return "(loading)";
+      }
+      // return rescueIndex + ':' + catId; // CATIDS[rescueIndex];
     },
-    getHover(rescueIndex) {
+    getHover(catId, rescueIndex) {
       return "Hover: " + rescueIndex;
     },
-    getFooter(rescueIndex) {
-      console.log(JSON.stringify(moonCatDetailsByRescueOrders[721]));
-      return JSON.stringify(moonCatDetailsByRescueOrders[721]);
+    getFooter(catId, rescueIndex) {
+      // const traitData = this.traitData[catId];
+      // if (traitData) {
+      //   return traitData.name;
+      // } else {
+      //   return "(loading)";
+      // }
+      return "";
     },
 
     async loadCatData() {
       if (!window.indexedDB) {
         console.log("IndexedDB NOT supported");
-      } else {
-        console.log("IndexedDB supported");
       }
-
-
-
-
 
       logInfo("NFTPostcard", "loadCatData() CATIDS.length: " + CATIDS.length);
 
-      var chunkSize = 500;
+      const chunkSize = 36;
       const DELAY = 1000;
       const delay = ms => new Promise(res => setTimeout(res, ms));
 
-      for (let i = 0; i < CATIDS.length && i < 1000; i += chunkSize) {
+      for (let i = 0; i < CATIDS.length && i < 36; i += chunkSize) {
         const slice = CATIDS.slice(i, i + chunkSize);
-        // logInfo("NFTPostcard", "loadCatData() slice: " + JSON.stringify(slice));
+        logInfo("NFTPostcard", "loadCatData() slice: " + JSON.stringify(slice));
         try {
-          // const requests = slice.map((catId) => fetch("https://api.mooncat.community/traits/" + catId));
-          const requests = slice.map((catId) => fetch("https://api.mooncat.community/contract-details/" + catId));
+          // logInfo("NFTPostcard", "loadCatData() url: " + "https://api.mooncat.community/traits/" + catId);
+          const requests = slice.map((catId) => fetch("https://api.mooncat.community/traits/" + catId));
+          // logInfo("NFTPostcard", "loadCatData() url: " + "https://api.mooncat.community/contract-details/" + catId);
+          // const requests = slice.map((catId) => fetch("https://api.mooncat.community/contract-details/" + catId));
           const responses = await Promise.all(requests);
           const errors = responses.filter((response) => !response.ok);
           if (errors.length > 0) {
@@ -579,10 +586,19 @@ const NFTPostcard = {
           }
           const json = responses.map((response) => response.json());
           const data = await Promise.all(json);
-          data.forEach((datum) => console.log(datum));
+          const t = this;
+          data.forEach((datum) => {
+            // console.table(datum);
+            Vue.set(t.traitData, datum.details.catId, datum);
+            // logInfo("NFTPostcard", "loadCatData() rescueIndex: " + datum.details.rescueIndex);
+            // logInfo("NFTPostcard", "loadCatData() datum: " + JSON.stringify(datum, null, 2));
+            // logInfo("NFTPostcard", "loadCatData() datum: " + JSON.stringify(t.traitData[datum.details.rescueIndex], null, 2));
+          });
         }
         catch (errors) {
-          errors.forEach((error) => console.error(error));
+          console.table(errors);
+          // logError("NFTPostcard", "loadCatData() errors: " + JSON.stringify(errors, null, 2));
+          // errors.forEach((error) => console.error(error));
         }
         await delay(DELAY);
       }
@@ -1139,7 +1155,7 @@ const NFTPostcard = {
     logDebug("NFTPostcard", "Calling timeoutCallback()");
     this.timeoutCallback();
     this.loadCatData();
-    this.loadNFTs();
+    // this.loadNFTs();
 
     let storedCanvas;
     try {
