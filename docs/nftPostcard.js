@@ -549,27 +549,27 @@ const NFTPostcard = {
 
       logDebug("NFTPostcard", "loadCatData() Dexie");
 
-      var db0 = new Dexie("MoonCatDB");
-      db0.version(1).stores({
-        apiData: '&rescueIndex,catId,timestamp'
-      });
-      await db0.apiData.bulkPut([
-        {rescueIndex: 0, catId: "0x12345678", timestamp: 1},
-        {rescueIndex: 1, catId: "0x23456789", timestamp: 2},
-        {rescueIndex: 2, catId: "0x34567890", timestamp: 3},
-        {rescueIndex: 3, catId: "0x45678901", timestamp: 4},
-        {rescueIndex: 4, catId: "0x56789012", timestamp: 5},
-        {rescueIndex: 5, catId: "0x67890123", timestamp: 6}
-      ]).then (function(){
-        return db0.apiData.get(3);
-      }).then(function (item) {
-        logDebug("NFTPostcard", "loadCatData() - timestamp: " + item.timestamp);
-      }).catch(function(error) {
-         logError("NFTPostcard", "loadCatData() - error: " + error);
-      });
-
-      const someFriends = await db0.apiData.toArray();
-      logDebug("NFTPostcard", "loadCatData() Dexie - someFriends: " + JSON.stringify(someFriends));
+      // var db0 = new Dexie("MoonCatDB");
+      // db0.version(1).stores({
+      //   apiData: '&rescueIndex,catId,timestamp'
+      // });
+      // await db0.apiData.bulkPut([
+      //   {rescueIndex: 0, catId: "0x12345678", timestamp: 1},
+      //   {rescueIndex: 1, catId: "0x23456789", timestamp: 2},
+      //   {rescueIndex: 2, catId: "0x34567890", timestamp: 3},
+      //   {rescueIndex: 3, catId: "0x45678901", timestamp: 4},
+      //   {rescueIndex: 4, catId: "0x56789012", timestamp: 5},
+      //   {rescueIndex: 5, catId: "0x67890123", timestamp: 6}
+      // ]).then (function(){
+      //   return db0.apiData.get(3);
+      // }).then(function (item) {
+      //   logDebug("NFTPostcard", "loadCatData() - timestamp: " + item.timestamp);
+      // }).catch(function(error) {
+      //    logError("NFTPostcard", "loadCatData() - error: " + error);
+      // });
+      //
+      // const someFriends = await db0.apiData.toArray();
+      // logDebug("NFTPostcard", "loadCatData() Dexie - someFriends: " + JSON.stringify(someFriends));
 
       logDebug("NFTPostcard", "loadCatData() CATIDS.length: " + CATIDS.length);
       // const dbName = "UserDB";
