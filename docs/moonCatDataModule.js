@@ -6,6 +6,8 @@ const MoonCatData = {
           Please switch to the Ethereum mainnet in MetaMask and refresh this page
         </b-card-text>
       </b-card>
+      MoonCatDataModule
+      <!--
       <b-button v-b-toggle.contracts size="sm" block variant="outline-info">Contracts</b-button>
       <b-collapse id="contracts" visible class="mt-2">
         <b-card no-body class="border-0" v-if="network == 1337 || network == 1 || network == 3">
@@ -33,6 +35,7 @@ const MoonCatData = {
           </b-row>
         </b-card>
       </b-collapse>
+      -->
     </div>
   `,
   data: function () {
@@ -52,18 +55,18 @@ const MoonCatData = {
     coinbase() {
       return store.getters['connection/coinbase'];
     },
-    collections() {
-      return store.getters['tokens/collections'];
-    },
-    collectionList() {
-      return store.getters['tokens/collectionList'];
-    },
-    assets() {
-      return store.getters['tokens/assets'];
-    },
-    nftData() {
-      return store.getters['tokens/nftData'];
-    },
+    // collections() {
+    //   return store.getters['tokens/collections'];
+    // },
+    // collectionList() {
+    //   return store.getters['tokens/collectionList'];
+    // },
+    // assets() {
+    //   return store.getters['tokens/assets'];
+    // },
+    // nftData() {
+    //   return store.getters['tokens/nftData'];
+    // },
   },
   methods: {
     async timeoutCallback() {
@@ -78,9 +81,9 @@ const MoonCatData = {
 
       // this.count++;
 
-      logInfo("MoonCatData", "before tokens/loadLibrary");
-      await store.dispatch('tokens/loadLibrary');
-      logInfo("MoonCatData", "after tokens/loadLibrary");
+      logInfo("MoonCatData", "before tokens/loadMoonCatData");
+      await store.dispatch('moonCatData/loadMoonCatData');
+      logInfo("MoonCatData", "after tokens/loadMoonCatData");
 
       var t = this;
       if (this.reschedule) {
@@ -111,35 +114,35 @@ const MoonCatData = {
 const moonCatDataModule = {
   namespaced: true,
   state: {
-    collections: {},
-    collectionList: [],
+    // collections: {},
+    // collectionList: [],
     assets: {},
     touched: {},
 
-    nftData: null,
-    allTokenIds: null,
-    allParents: null,
-    allAttributes: null,
-    allAncientDNAs: null,
+    // nftData: null,
+    // allTokenIds: null,
+    // allParents: null,
+    // allAttributes: null,
+    // allAncientDNAs: null,
 
-    selectedId: null,
-    balances: null,
+    // selectedId: null,
+    // balances: null,
 
     params: null,
     executing: false,
   },
   getters: {
-    collections: state => state.collections,
-    collectionList: state => state.collectionList,
+    // collections: state => state.collections,
+    // collectionList: state => state.collectionList,
     assets: state => state.assets,
-    nftData: state => state.nftData,
-    allTokenIds: state => state.allTokenIds,
-    allParents: state => state.allParents,
-    allAttributes: state => state.allAttributes,
-    allAncientDNAs: state => state.allAncientDNAs,
+    // nftData: state => state.nftData,
+    // allTokenIds: state => state.allTokenIds,
+    // allParents: state => state.allParents,
+    // allAttributes: state => state.allAttributes,
+    // allAncientDNAs: state => state.allAncientDNAs,
 
-    selectedId: state => state.selectedId,
-    balances: state => state.balances,
+    // selectedId: state => state.selectedId,
+    // balances: state => state.balances,
 
     params: state => state.params,
   },
@@ -254,65 +257,65 @@ const moonCatDataModule = {
         }
       }
     },
-    updateNFTData(state, nftData) {
-      // logInfo("moonCatDataModule", "mutations.updateNFTData(" + JSON.stringify(nftData) + ")");
-      state.nftData = nftData;
-      if (state.nftData == null) {
-        state.allTokenIds = null;
-        state.allParents = null;
-        state.allAttributes = null;
-        state.allAncientDNAs = null;
-      } else {
-        const allParents = {};
-        const allAttributes = {};
-        const allAncientDNAs = {};
-        for (let tokenId in Object.keys(state.nftData.tokens)) {
-          const token = state.nftData.tokens[tokenId];
-          for (let parentIndex in token.parents) {
-            const parent = token.parents[parentIndex];
-            if (allParents[parent] === undefined) {
-              allParents[parent] = 1;
-            }
-          }
-          for (let attributeIndex in token.attributes) {
-            const attribute = token.attributes[attributeIndex];
-            if (allAttributes[attribute] === undefined) {
-              allAttributes[attribute] = 1;
-            }
-          }
-          for (let ancientDNAIndex in token.ancientDNA) {
-            let ancientDNA = token.ancientDNA[ancientDNAIndex];
-            if (allAncientDNAs[ancientDNA] === undefined) {
-              allAncientDNAs[ancientDNA] = 1;
-            }
-          }
-        }
-        state.allTokenIds = Object.keys(state.nftData.tokens).sort(function(a, b) { return a - b; });
-        state.allParents = Object.keys(allParents).sort();
-        state.allAttributes = Object.keys(allAttributes).sort();
-        state.allAncientDNAs = Object.keys(allAncientDNAs).sort();
-      }
-    },
-    updateSelectedId(state, selectedId) {
-      state.selectedId = selectedId;
-      logDebug("moonCatDataModule", "updateSelectedId('" + JSON.stringify(selectedId) + "')")
-    },
-    updateBalances(state, balances) {
-      state.balances = balances;
-      logDebug("moonCatDataModule", "updateBalances('" + JSON.stringify(balances) + "')")
-    },
-    updateParams(state, params) {
-      state.params = params;
-      logDebug("moonCatDataModule", "updateParams('" + params + "')")
-    },
-    updateExecuting(state, executing) {
-      state.executing = executing;
-      logDebug("moonCatDataModule", "updateExecuting(" + executing + ")")
-    },
+    // updateNFTData(state, nftData) {
+    //   // logInfo("moonCatDataModule", "mutations.updateNFTData(" + JSON.stringify(nftData) + ")");
+    //   state.nftData = nftData;
+    //   if (state.nftData == null) {
+    //     state.allTokenIds = null;
+    //     state.allParents = null;
+    //     state.allAttributes = null;
+    //     state.allAncientDNAs = null;
+    //   } else {
+    //     const allParents = {};
+    //     const allAttributes = {};
+    //     const allAncientDNAs = {};
+    //     for (let tokenId in Object.keys(state.nftData.tokens)) {
+    //       const token = state.nftData.tokens[tokenId];
+    //       for (let parentIndex in token.parents) {
+    //         const parent = token.parents[parentIndex];
+    //         if (allParents[parent] === undefined) {
+    //           allParents[parent] = 1;
+    //         }
+    //       }
+    //       for (let attributeIndex in token.attributes) {
+    //         const attribute = token.attributes[attributeIndex];
+    //         if (allAttributes[attribute] === undefined) {
+    //           allAttributes[attribute] = 1;
+    //         }
+    //       }
+    //       for (let ancientDNAIndex in token.ancientDNA) {
+    //         let ancientDNA = token.ancientDNA[ancientDNAIndex];
+    //         if (allAncientDNAs[ancientDNA] === undefined) {
+    //           allAncientDNAs[ancientDNA] = 1;
+    //         }
+    //       }
+    //     }
+    //     state.allTokenIds = Object.keys(state.nftData.tokens).sort(function(a, b) { return a - b; });
+    //     state.allParents = Object.keys(allParents).sort();
+    //     state.allAttributes = Object.keys(allAttributes).sort();
+    //     state.allAncientDNAs = Object.keys(allAncientDNAs).sort();
+    //   }
+    // },
+    // updateSelectedId(state, selectedId) {
+    //   state.selectedId = selectedId;
+    //   logDebug("moonCatDataModule", "updateSelectedId('" + JSON.stringify(selectedId) + "')")
+    // },
+    // updateBalances(state, balances) {
+    //   state.balances = balances;
+    //   logDebug("moonCatDataModule", "updateBalances('" + JSON.stringify(balances) + "')")
+    // },
+    // updateParams(state, params) {
+    //   state.params = params;
+    //   logDebug("moonCatDataModule", "updateParams('" + params + "')")
+    // },
+    // updateExecuting(state, executing) {
+    //   state.executing = executing;
+    //   logDebug("moonCatDataModule", "updateExecuting(" + executing + ")")
+    // },
   },
   actions: {
-    async loadLibrary(context) {
-      logInfo("moonCatDataModule", "actions.loadLibrary()");
+    async loadMoonCatData(context) {
+      logInfo("moonCatDataModule", "actions.loadMoonCatData()");
 
       // const defaultRegistryEntries = [
       //   ["0xBeeef66749B64Afe43Bbc9475635Eb510cFE4922", "0xBeeef66749B64Afe43Bbc9475635Eb510cFE4922", "0xBEEEf7786F0681Dd80651e4F05253dB8C9Fb74d1", "0x00000217d2795F1Da57e392D2a5bC87125BAA38D"],
@@ -351,7 +354,7 @@ const moonCatDataModule = {
         [2, 1],
         [1, 1],
       ];
-      // logInfo("moonCatDataModule", "actions.loadLibrary() - defaultRegistryEntries[0].length: " + defaultRegistryEntries[0].length);
+      // logInfo("moonCatDataModule", "actions.loadMoonCatData() - defaultRegistryEntries[0].length: " + defaultRegistryEntries[0].length);
 
       const owners = {};
       const permissions = {};
@@ -371,8 +374,8 @@ const moonCatDataModule = {
         permissions[owner + ':' + contract] = { permission: permission, curation: curation };
         // logInfo("moonCatDataModule", "  owner: " + owner + ", contract: " + contract + ", permission: " + permission + ", curation: " + curation);
       }
-      // logInfo("moonCatDataModule", "actions.loadLibrary() - owners: " + JSON.stringify(owners));
-      logDebug("moonCatDataModule", "actions.loadLibrary() - permissions: " + JSON.stringify(permissions));
+      // logInfo("moonCatDataModule", "actions.loadMoonCatData() - owners: " + JSON.stringify(owners));
+      logDebug("moonCatDataModule", "actions.loadMoonCatData() - permissions: " + JSON.stringify(permissions));
 
       context.commit('updateAssetsPreparation');
       for (const [owner, ownersContracts] of Object.entries(owners)) {
@@ -398,9 +401,9 @@ const moonCatDataModule = {
           while (!completed) {
             const offset = PAGESIZE * page;
             const url = "https://api.opensea.io/api/v1/assets?owner=" + owner + "&order_direction=desc&limit=" + PAGESIZE + "&offset=" + offset;
-            // logInfo("moonCatDataModule", "actions.loadLibrary() owner url:" + url);
+            // logInfo("moonCatDataModule", "actions.loadMoonCatData() owner url:" + url);
             const data = await fetch(url).then(response => response.json());
-            context.commit('updateAssets', { owner, permissions, data } );
+            // context.commit('updateAssets', { owner, permissions, data } );
             // if (data.assets && data.assets.length > 0) {
             //   for (let assetIndex = 0; assetIndex < data.assets.length; assetIndex++) {
             //     const asset = data.assets[assetIndex];
@@ -410,7 +413,7 @@ const moonCatDataModule = {
             //       permission = permissions[asset.owner.address.toLowerCase() + ':' + null];
             //     }
             //     context.commit('updateAssets', { permission, asset } );
-            //     // logInfo("moonCatDataModule", "actions.loadLibrary() - asset(" + (parseInt(offset) + assetIndex) + ") name: " + asset.collection.name + ", slug: " + asset.collection.slug + ", owner: " + asset.owner.address + ", contract: " + asset.asset_contract.address + ", permission: " + JSON.stringify(permission));
+            //     // logInfo("moonCatDataModule", "actions.loadMoonCatData() - asset(" + (parseInt(offset) + assetIndex) + ") name: " + asset.collection.name + ", slug: " + asset.collection.slug + ", owner: " + asset.owner.address + ", contract: " + asset.asset_contract.address + ", permission: " + JSON.stringify(permission));
             //     // assets[asset.owner.address.toLowerCase() + ':' + asset.asset_contract.address.toLowerCase()] = { permission: permission, asset: asset };
             //   }
             // }
@@ -430,7 +433,7 @@ const moonCatDataModule = {
             while (!completed) {
               const offset = PAGESIZE * page;
               const url = "https://api.opensea.io/api/v1/assets?owner=" + owner + "&asset_contract_address=" + contract + "&order_direction=desc&limit=" + PAGESIZE + "&offset=" + offset;
-              logInfo("moonCatDataModule", "actions.loadLibrary() owner and contract url:" + url);
+              logInfo("moonCatDataModule", "actions.loadMoonCatData() owner and contract url:" + url);
               const data = await fetch(url).then(response => response.json());
               context.commit('updateAssets', { owner, permissions, data });
               // if (data.assets && data.assets.length > 0) {
@@ -440,7 +443,7 @@ const moonCatDataModule = {
               //     if (permission == null) {
               //       permission = permissions[asset.owner.address.toLowerCase() + ':' + null];
               //     }
-              //     // logInfo("moonCatDataModule", "actions.loadLibrary() - asset(" + (parseInt(offset) + assetIndex) + ") name: " + asset.collection.name + ", slug: " + asset.collection.slug + ", owner: " + asset.owner.address + ", contract: " + asset.asset_contract.address + ", permission: " + JSON.stringify(permission));
+              //     // logInfo("moonCatDataModule", "actions.loadMoonCatData() - asset(" + (parseInt(offset) + assetIndex) + ") name: " + asset.collection.name + ", slug: " + asset.collection.slug + ", owner: " + asset.owner.address + ", contract: " + asset.asset_contract.address + ", permission: " + JSON.stringify(permission));
               //     // TODO - Add timestamp, and add routine to remove expired entries
               //     // assets[asset.owner.address.toLowerCase() + ':' + asset.asset_contract.address.toLowerCase()] = { permission: permission, asset: asset };
               //     context.commit('updateAssets', { permission, asset });
@@ -456,7 +459,7 @@ const moonCatDataModule = {
         }
         context.commit('updateAssetsCompletion');
         // for (const [key, asset] of Object.entries(assets)) {
-        //   logInfo("moonCatDataModule", "actions.loadLibrary():" + key + " => " + JSON.stringify(asset).substring(0, 100));
+        //   logInfo("moonCatDataModule", "actions.loadMoonCatData():" + key + " => " + JSON.stringify(asset).substring(0, 100));
         // }
       }
     },
