@@ -633,11 +633,11 @@ const NFTPostcard = {
       // logDebug("NFTPostcard", "loadCatData() - openRequest.onsuccess after");
 
 
-      const chunkSize = 50; // 500
+      const chunkSize = 36; // 500
       const DELAY = 1000;
       const delay = ms => new Promise(res => setTimeout(res, ms));
 
-      for (let i = 0; i < CATIDS.length && i < 800; i += chunkSize) {
+      for (let i = 0; i < CATIDS.length && i < 36; i += chunkSize) {
         const slice = CATIDS.slice(i, i + chunkSize);
         // logDebug("NFTPostcard", "loadCatData() slice: " + JSON.stringify(slice));
         try {

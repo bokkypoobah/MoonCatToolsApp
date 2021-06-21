@@ -317,6 +317,42 @@ const moonCatDataModule = {
     async loadMoonCatData(context) {
       logInfo("moonCatDataModule", "actions.loadMoonCatData()");
 
+      const chunkSize = 5; // 500
+      const DELAY = 1000;
+      const delay = ms => new Promise(res => setTimeout(res, ms));
+
+      for (let i = 0; i < CATIDS.length && i < 5; i += chunkSize) {
+        const slice = CATIDS.slice(i, i + chunkSize);
+        // logDebug("NFTPostcard", "loadCatData() slice: " + JSON.stringify(slice));
+        try {
+          // logDebug("NFTPostcard", "loadCatData() url: " + "https://api.mooncat.community/traits/" + catId);
+          const requests = slice.map((catId) => fetch("https://api.mooncat.community/traits/" + catId));
+          // logDebug("NFTPostcard", "loadCatData() url: " + "https://api.mooncat.community/contract-details/" + catId);
+          // const requests = slice.map((catId) => fetch("https://api.mooncat.community/contract-details/" + catId));
+          const responses = await Promise.all(requests);
+          const errors = responses.filter((response) => !response.ok);
+          if (errors.length > 0) {
+            throw errors.map((response) => Error(response.statusText));
+          }
+          const json = responses.map((response) => response.json());
+          const data = await Promise.all(json);
+          const t = this;
+          data.forEach((datum) => {
+            console.table(datum);
+            // Vue.set(t.traitData, datum.details.catId, datum);
+            // logDebug("NFTPostcard", "loadCatData() rescueIndex: " + datum.details.rescueIndex);
+            // logDebug("NFTPostcard", "loadCatData() datum: " + JSON.stringify(datum, null, 2));
+            // logDebug("NFTPostcard", "loadCatData() datum: " + JSON.stringify(t.traitData[datum.details.rescueIndex], null, 2));
+          });
+        }
+        catch (errors) {
+          console.table(errors);
+          // logError("NFTPostcard", "loadCatData() errors: " + JSON.stringify(errors, null, 2));
+          // errors.forEach((error) => console.error(error));
+        }
+        await delay(DELAY);
+      }
+
       var db0 = new Dexie("MoonCatDB");
       db0.version(1).stores({
         apiData: '&rescueIndex,catId,timestamp'
@@ -450,6 +486,9 @@ const moonCatDataModule = {
           }
 
           if (networkUpdated || blockUpdated || coinbaseUpdated || paramsChanged) {
+            const nftAddress = "token.zombiebabies.eth"; // state.nftData.nftAddress;
+            logDebug("moonCatDataModule", "execWeb3() nftAddress: " + nftAddress);
+
             logInfo("moonCatDataModule", "execWeb3() coinbase: " + coinbase);
             const provider = new ethers.providers.Web3Provider(window.ethereum);
 
