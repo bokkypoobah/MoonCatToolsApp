@@ -25,7 +25,7 @@ const NFTPostcard = {
                       </span>
                     </template>
                     <!-- <img :src="generateMoonCatImage(catId, 4)" /> -->
-                    <img width="75%" :src="'https://api.mooncat.community/glow-image/' + catId" />
+                    <img width="100%" :src="'https://api.mooncat.community/glow-image/' + catId" />
                     <template #footer>
                       {{ getFooter(catId, rescueIndex) }}
 
@@ -572,67 +572,90 @@ const NFTPostcard = {
         console.log("IndexedDB NOT supported");
       }
 
+      logInfo("NFTPostcard", "loadCatData() Dexie");
+
+      var db0 = new Dexie("MoonCatDB");
+      db0.version(1).stores({
+          apiData: '&rescueIndex,catId,timestamp'
+      });
+      await db0.apiData.bulkPut([
+        {rescueIndex: 0, catId: "0x12345678", timestamp: 1},
+        {rescueIndex: 1, catId: "0x23456789", timestamp: 2},
+        {rescueIndex: 2, catId: "0x34567890", timestamp: 3},
+        {rescueIndex: 3, catId: "0x45678901", timestamp: 4},
+        {rescueIndex: 4, catId: "0x56789012", timestamp: 5},
+        {rescueIndex: 5, catId: "0x67890123", timestamp: 6}
+      ]).then (function(){
+          return db0.apiData.get(3);
+      }).then(function (item) {
+          alert ("Timestamp is " + item.timestamp);
+      }).catch(function(error) {
+         alert ("Ooops: " + error);
+      });
+
+      const someFriends = await db0.apiData.toArray();
+      logInfo("NFTPostcard", "loadCatData() Dexie - someFriends: " + JSON.stringify(someFriends));
+
       logInfo("NFTPostcard", "loadCatData() CATIDS.length: " + CATIDS.length);
-
-      const dbName = "UserDB";
-      const objectStoreName = "UserDetails";
-      const version = 1;
-      const openRequest = indexedDB.open(dbName, version);
-      openRequest.onerror = function(event) {
-        logInfo("NFTPostcard", "loadCatData() - openRequest.onerror: " + JSON.stringify(event));
-      };
-      openRequest.onupgradeneeded = function(event) {
-        const db = event.target.result;
-        logInfo("NFTPostcard", "loadCatData() - openRequest.onupgradeneeded: " + JSON.stringify(db));
-        // Create the UserDetails object store
-        // with auto-increment id
-        const store = db.createObjectStore(objectStoreName, {
-            autoIncrement: true
-        });
-        // // Create an index on the NIC property
-        // const index = store.createIndex('nic', 'nic', {
-        //     unique: true
-        // });
-      };
-      // logInfo("NFTPostcard", "loadCatData() openRequest: " + JSON.stringify(openRequest));
-      // var transaction = db.transaction(["customers"], "readwrite");
-
-      function insertUser(db, user) {
-        logInfo("NFTPostcard", "loadCatData() - insertUser: " + JSON.stringify(user));
-        // Create a new transaction
-        const txn = db.transaction([objectStoreName], 'readwrite');
-        // Get the UserDetails object store
-        const store = txn.objectStore(objectStoreName);
-        // Insert a new record
-        let query = store.put(user);
-        // Handle the success case
-        query.onsuccess = function (event) {
-            console.log(event);
-        };
-        // Handle the error case
-        query.onerror = function (event) {
-            console.log(event.target.errorCode);
-        }
-        // Close the database once the transaction completes
-        txn.oncomplete = function () {
-            db.close();
-        };
-      }
-      openRequest.onsuccess = (event) => {
-        logInfo("NFTPostcard", "loadCatData() - openRequest.onsuccess: " + JSON.stringify(event));
-        const db = event.target.result;
-        insertUser(db, {
-          email: 'john.doe@outlook.com',
-          firstName: 'John',
-          lastName: 'Doe',
-        });
-        insertUser(db, {
-          email: 'ann.doe@gmail.com',
-          firstName: 'Ann',
-          lastName: 'Doe'
-        });
-        console.table(openRequest);
-      };
+      // const dbName = "UserDB";
+      // const objectStoreName = "UserDetails";
+      // const version = 1;
+      // const openRequest = indexedDB.open(dbName, version);
+      // openRequest.onerror = function(event) {
+      //   logInfo("NFTPostcard", "loadCatData() - openRequest.onerror: " + JSON.stringify(event));
+      // };
+      // openRequest.onupgradeneeded = function(event) {
+      //   const db = event.target.result;
+      //   logInfo("NFTPostcard", "loadCatData() - openRequest.onupgradeneeded: " + JSON.stringify(db));
+      //   // Create the UserDetails object store
+      //   // with auto-increment id
+      //   const store = db.createObjectStore(objectStoreName, {
+      //       autoIncrement: true
+      //   });
+      //   // // Create an index on the NIC property
+      //   // const index = store.createIndex('nic', 'nic', {
+      //   //     unique: true
+      //   // });
+      // };
+      // // logInfo("NFTPostcard", "loadCatData() openRequest: " + JSON.stringify(openRequest));
+      // // var transaction = db.transaction(["customers"], "readwrite");
+      //
+      // function insertUser(db, user) {
+      //   logInfo("NFTPostcard", "loadCatData() - insertUser: " + JSON.stringify(user));
+      //   const txn = db.transaction([objectStoreName], 'readwrite');
+      //   const store = txn.objectStore(objectStoreName);
+      //   let query = store.put(user);
+      //   query.onsuccess = function (event) {
+      //     logInfo("NFTPostcard", "loadCatData() - insertUser: " + JSON.stringify(event));
+      //     console.table(store);
+      //     const results = store.getAllEntries();
+      //     console.table(results);
+      //       // console.log(event);
+      //   };
+      //   query.onerror = function (event) {
+      //     console.log(event.target.errorCode);
+      //   }
+      //   txn.oncomplete = function () {
+      //     db.close();
+      //   };
+      // }
+      // logInfo("NFTPostcard", "loadCatData() - openRequest.onsuccess before");
+      // openRequest.onsuccess = (event) => {
+      //   logInfo("NFTPostcard", "loadCatData() - openRequest.onsuccess: " + JSON.stringify(event));
+      //   const db = event.target.result;
+      //   insertUser(db, {
+      //     email: 'john.doe@outlook.com',
+      //     firstName: 'John',
+      //     lastName: 'Doe',
+      //   });
+      //   insertUser(db, {
+      //     email: 'ann.doe@gmail.com',
+      //     firstName: 'Ann',
+      //     lastName: 'Doe'
+      //   });
+      //   console.table(openRequest);
+      // };
+      // logInfo("NFTPostcard", "loadCatData() - openRequest.onsuccess after");
 
 
       const chunkSize = 50; // 500
