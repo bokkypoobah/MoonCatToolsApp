@@ -1,13 +1,13 @@
 const NFTPostcard = {
   template: `
     <div class="mt-5 pt-3">
-      <b-card no-body header="Blah" class="border-0" header-class="p-1">
+      <b-card no-body header="Blah (Work in progress)" class="border-0" header-class="p-1">
         <b-card no-body class="border-0 m-0 mt-2">
           <b-card-body class="p-0">
 
             <b-container class="p-0" fluid>
 
-              <b-button @click="loadCatData">Load Cat Data</b-button>
+              <!-- <b-button @click="loadCatData">Load Cat Data</b-button> -->
 
               <b-card-group deck class="m-0">
                 <!-- <div v-for="(catId, rescueIndex) in catIds.slice(0, 36)"> -->
@@ -76,26 +76,19 @@ const NFTPostcard = {
               </b-card-group>
 
 
-
-
               <b-row class="mb-3">
                 <b-col md="8" class="p-3">
-
                   <!--
                   <img :src="generateMoonCatImage('0x00f9e605e3', 20)" />
                   -->
-
                   <!--
-                  {{ moonCatColours[0] }}
-                  {{ catIds.length }}
-                  {{ getMoonCatDetailsByRescueOrders[100] }}
-                  -->
-
                   <div id="toBeCaptured">
                     <canvas id="thecanvas" width="1024" height="480" style="border:1px solid; margin: 0 auto; position: absolute;"></canvas>
                   </div>
+                  -->
                 </b-col>
 
+                <!--
                 <div>
                   <b-button id="show-btn" @click="showModal">Open Modal</b-button>
                   <b-button id="toggle-btn" @click="toggleModal">Toggle Modal</b-button>
@@ -125,29 +118,17 @@ const NFTPostcard = {
                     <b-button class="mt-2" variant="outline-warning" block @click="toggleModal">Toggle Me</b-button>
                   </b-modal>
                 </div>
-
-                <!--
-                <b-col md="4" class="ml-auto p-3">
-                  <pre>
-                    <code class="json">
-{{ JSON.stringify(selectedObject, null, 4) }}
-                    </code>
-                  </pre>
-                </b-col>
                 -->
-
               </b-row>
             </b-container>
-            <!--
-            <b-form-group label-cols="2" label-size="sm">
-              <b-button size="sm" @click="saveImage()" variant="info">Save Image</b-button>
-            </b-form-group>
-            -->
 
+            <!--
             <div>
               <b-card no-body class="mt-2">
                 <b-tabs vertical pills card end nav-class="p-2" active-tab-class="p-2">
+                -->
 
+                  <!--
                   <b-tab title="Canvas" class="p-1">
                     <b-card-text>
 
@@ -177,19 +158,15 @@ const NFTPostcard = {
                         </b-input-group>
                       </b-form-group>
 
-                      <!--
-                      <b-form-group label-cols="2" label-size="sm">
-                        <b-button size="sm" @click="setCanvasSize()" variant="info">Set Canvas Size</b-button>
-                      </b-form-group>
-                      -->
                       <b-form-group label-cols="2" label-size="sm" description="To be implemented. Please use your OS print screen buttons">
                         <b-button disabled size="sm" @click="saveImage()" v-b-popover.hover="'Not working yet. Please use your OS print screen buttons'" variant="info">Save Image</b-button>
                       </b-form-group>
                     </b-card-text>
                   </b-tab>
+                  -->
 
+                  <!--
                   <b-tab active title="NFTs" class="p-1">
-
                     <b-row class="mb-3">
                       <b-col md="6" class="p-3">
                         <b-card-group deck class="m-0">
@@ -214,10 +191,7 @@ const NFTPostcard = {
                       <div v-for="asset in assetsToDisplay">
                         <b-card body-class="p-1" header-class="p-2" footer-class="p-2" img-top class="m-1 p-0">
                           <b-link @click="addAsset(asset)" v-b-popover.hover="'Click to add image to the canvas'">
-                            <!-- <b-avatar rounded="sm" variant="light" size="10.0rem" :src="asset.image_url" class="pixelated"></b-avatar> -->
-                            <!-- <b-avatar rounded="sm" variant="light" size="10.0rem" :src="asset.image_url" class="pixelated"></b-avatar> -->
                             <b-img rounded="sm" variant="light" size="10.0rem" :src="asset.image_url" style="width: 15rem; height: 15rem; object-fit: contain; object-position: 50% top; background-color: #fafafa;" class="pixelated m-1 p-2"></b-img>
-                            <!-- <b-img rounded="sm" variant="light" size="10.0rem" :src="asset.image_url" style="image-rendering: pixelated!; width: 10rem; height: 10rem; object-fit: contain; object-position: 50% top; background-color: #fafafa; " class="m-1 p-2"></b-img> -->
                           </b-link>
                           <template #header>
                             <span variant="secondary" class="small truncate">
@@ -226,11 +200,6 @@ const NFTPostcard = {
                               </b-link>
                               {{ getCollectionTitle(asset).substring(0, 32) }}
                             </span>
-                            <!--
-                            <span class="float-right">
-                              <b-link :href="asset.permalink + '?ref=0x000001f568875F378Bf6d170B790967FE429C81A'" v-b-popover.hover="'View on OpenSea.io'" target="_blank"><img src="images/381114e-opensea-logomark-flat-colored-blue.png" width="20px" /></b-link>
-                            </span>
-                            -->
                           </template>
                           <template #footer>
                             <span class="small truncate" v-b-popover.hover="getAssetName(asset)">
@@ -238,14 +207,15 @@ const NFTPostcard = {
                             </span>
                             <span class="float-right">
                               <b-link :href="asset.permalink + '?ref=0x000001f568875F378Bf6d170B790967FE429C81A'" v-b-popover.hover="'View on OpenSea.io'" target="_blank"><img src="images/381114e-opensea-logomark-flat-colored-blue.png" width="20px" /></b-link>
-                              <!-- <b-link :href="'https://rarible.com/token/'+ asset.permalink + ':' + tokenId" v-b-popover.hover="'View on Rarible.com'" target="_blank"><img src="images/rarible_feb7c08ba34c310f059947d23916f76c12314e85.png" height="20px" /></b-link> -->
                             </span>
                           </template>
                         </b-card>
                       </div>
                     </b-card-group>
                   </b-tab>
+                  -->
 
+                  <!--
                   <b-tab title="Upload Image" class="p-1">
                     <b-card-text>
                       <b-row  align-h="start">
@@ -280,7 +250,9 @@ const NFTPostcard = {
                       </b-form-group>
                     </b-card-text>
                   </b-tab>
+                  -->
 
+                  <!--
                   <b-tab title="Text" class="p-1">
                     <b-card-text>
                       <b-form-group label-cols="2" label-size="sm" label="Enter text">
@@ -322,10 +294,13 @@ const NFTPostcard = {
 
                     </b-card-text>
                   </b-tab>
+                  -->
 
+                <!--
                 </b-tabs>
               </b-card>
             </div>
+            -->
 
           </b-card-body>
         </b-card>
@@ -576,7 +551,7 @@ const NFTPostcard = {
 
       var db0 = new Dexie("MoonCatDB");
       db0.version(1).stores({
-          apiData: '&rescueIndex,catId,timestamp'
+        apiData: '&rescueIndex,catId,timestamp'
       });
       await db0.apiData.bulkPut([
         {rescueIndex: 0, catId: "0x12345678", timestamp: 1},
@@ -586,11 +561,11 @@ const NFTPostcard = {
         {rescueIndex: 4, catId: "0x56789012", timestamp: 5},
         {rescueIndex: 5, catId: "0x67890123", timestamp: 6}
       ]).then (function(){
-          return db0.apiData.get(3);
+        return db0.apiData.get(3);
       }).then(function (item) {
-          alert ("Timestamp is " + item.timestamp);
+        logDebug("NFTPostcard", "loadCatData() - timestamp: " + item.timestamp);
       }).catch(function(error) {
-         alert ("Ooops: " + error);
+         logError("NFTPostcard", "loadCatData() - error: " + error);
       });
 
       const someFriends = await db0.apiData.toArray();
