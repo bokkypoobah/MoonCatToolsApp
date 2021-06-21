@@ -1,4 +1,4 @@
-const Tokens = {
+const MoonCatData = {
   template: `
     <div>
       <b-card header-class="warningheader" header="Incorrect Network Detected" v-if="network != 1337 && network != 1 && network != 3">
@@ -67,7 +67,7 @@ const Tokens = {
   },
   methods: {
     async timeoutCallback() {
-      // logDebug("Tokens", "timeoutCallback() count: " + this.count);
+      // logInfo("MoonCatData", "timeoutCallback() count: " + this.count);
       if (this.count++ % 15 == 0 || store.getters['connection/blockUpdated'] || this.refreshNow) {
         // Call from Connection instead
         // store.dispatch('tokens/execWeb3', { count: this.count });
@@ -78,9 +78,9 @@ const Tokens = {
 
       // this.count++;
 
-      logDebug("Tokens", "before tokens/loadLibrary");
+      logInfo("MoonCatData", "before tokens/loadLibrary");
       await store.dispatch('tokens/loadLibrary');
-      logDebug("Tokens", "after tokens/loadLibrary");
+      logInfo("MoonCatData", "after tokens/loadLibrary");
 
       var t = this;
       if (this.reschedule) {
@@ -91,10 +91,10 @@ const Tokens = {
     },
   },
   // beforeDestroy() {
-  //   logDebug("Tokens", "beforeDestroy()");
+  //   logInfo("MoonCatData", "beforeDestroy()");
   // },
   mounted() {
-    logDebug("Tokens", "mounted()");
+    logInfo("MoonCatData", "mounted()");
     this.reschedule = true;
     var t = this;
     setTimeout(function() {
@@ -102,13 +102,13 @@ const Tokens = {
     }, 1000);
   },
   destroyed() {
-    logDebug("Tokens", "destroyed()");
+    logDebug("MoonCatData", "destroyed()");
     this.reschedule = false;
   },
 };
 
 
-const tokensModule = {
+const moonCatDataModule = {
   namespaced: true,
   state: {
     collections: {},
@@ -174,16 +174,16 @@ const tokensModule = {
 
       // for (const contract in state.collectionList) {
       //   const collection = state.collections[state.collectionList[contract]];
-      //   logDebug("tokensModule", "mutations.updateAssetsCompletion() - collection: " + JSON.stringify(collection, null, 2));
+      //   logInfo("moonCatDataModule", "mutations.updateAssetsCompletion() - collection: " + JSON.stringify(collection, null, 2));
       //   for (let assetKeyIndex in collection.assetList) {
       //     const assetKey = collection.assetList[assetKeyIndex];
       //     const asset = state.assets[assetKey];
-      //     logDebug("tokensModule", "mutations.updateAssetsCompletion()   - asset: " + JSON.stringify(asset));
+      //     logInfo("moonCatDataModule", "mutations.updateAssetsCompletion()   - asset: " + JSON.stringify(asset));
       //   }
       // }
     },
     updateAssets(state, { owner, permissions, data }) {
-      // logDebug("tokensModule", "mutations.updateAssets(" + JSON.stringify(permissions) + ", " + JSON.stringify(data).substring(0, 100) + ")");
+      // logInfo("moonCatDataModule", "mutations.updateAssets(" + JSON.stringify(permissions) + ", " + JSON.stringify(data).substring(0, 100) + ")");
       if (data && data.assets && data.assets.length > 0) {
         for (let assetIndex = 0; assetIndex < data.assets.length; assetIndex++) {
           const asset = data.assets[assetIndex];
@@ -255,7 +255,7 @@ const tokensModule = {
       }
     },
     updateNFTData(state, nftData) {
-      // logDebug("tokensModule", "mutations.updateNFTData(" + JSON.stringify(nftData) + ")");
+      // logInfo("moonCatDataModule", "mutations.updateNFTData(" + JSON.stringify(nftData) + ")");
       state.nftData = nftData;
       if (state.nftData == null) {
         state.allTokenIds = null;
@@ -295,24 +295,24 @@ const tokensModule = {
     },
     updateSelectedId(state, selectedId) {
       state.selectedId = selectedId;
-      logDebug("tokensModule", "updateSelectedId('" + JSON.stringify(selectedId) + "')")
+      logDebug("moonCatDataModule", "updateSelectedId('" + JSON.stringify(selectedId) + "')")
     },
     updateBalances(state, balances) {
       state.balances = balances;
-      logDebug("tokensModule", "updateBalances('" + JSON.stringify(balances) + "')")
+      logDebug("moonCatDataModule", "updateBalances('" + JSON.stringify(balances) + "')")
     },
     updateParams(state, params) {
       state.params = params;
-      logDebug("tokensModule", "updateParams('" + params + "')")
+      logDebug("moonCatDataModule", "updateParams('" + params + "')")
     },
     updateExecuting(state, executing) {
       state.executing = executing;
-      logDebug("tokensModule", "updateExecuting(" + executing + ")")
+      logDebug("moonCatDataModule", "updateExecuting(" + executing + ")")
     },
   },
   actions: {
     async loadLibrary(context) {
-      logDebug("tokensModule", "actions.loadLibrary()");
+      logInfo("moonCatDataModule", "actions.loadLibrary()");
 
       // const defaultRegistryEntries = [
       //   ["0xBeeef66749B64Afe43Bbc9475635Eb510cFE4922", "0xBeeef66749B64Afe43Bbc9475635Eb510cFE4922", "0xBEEEf7786F0681Dd80651e4F05253dB8C9Fb74d1", "0x00000217d2795F1Da57e392D2a5bC87125BAA38D"],
@@ -351,7 +351,7 @@ const tokensModule = {
         [2, 1],
         [1, 1],
       ];
-      // logDebug("tokensModule", "actions.loadLibrary() - defaultRegistryEntries[0].length: " + defaultRegistryEntries[0].length);
+      // logInfo("moonCatDataModule", "actions.loadLibrary() - defaultRegistryEntries[0].length: " + defaultRegistryEntries[0].length);
 
       const owners = {};
       const permissions = {};
@@ -369,10 +369,10 @@ const tokensModule = {
           owners[owner].push(contract);
         }
         permissions[owner + ':' + contract] = { permission: permission, curation: curation };
-        // logDebug("tokensModule", "  owner: " + owner + ", contract: " + contract + ", permission: " + permission + ", curation: " + curation);
+        // logInfo("moonCatDataModule", "  owner: " + owner + ", contract: " + contract + ", permission: " + permission + ", curation: " + curation);
       }
-      // logDebug("tokensModule", "actions.loadLibrary() - owners: " + JSON.stringify(owners));
-      logDebug("tokensModule", "actions.loadLibrary() - permissions: " + JSON.stringify(permissions));
+      // logInfo("moonCatDataModule", "actions.loadLibrary() - owners: " + JSON.stringify(owners));
+      logDebug("moonCatDataModule", "actions.loadLibrary() - permissions: " + JSON.stringify(permissions));
 
       context.commit('updateAssetsPreparation');
       for (const [owner, ownersContracts] of Object.entries(owners)) {
@@ -398,7 +398,7 @@ const tokensModule = {
           while (!completed) {
             const offset = PAGESIZE * page;
             const url = "https://api.opensea.io/api/v1/assets?owner=" + owner + "&order_direction=desc&limit=" + PAGESIZE + "&offset=" + offset;
-            // logDebug("tokensModule", "actions.loadLibrary() owner url:" + url);
+            // logInfo("moonCatDataModule", "actions.loadLibrary() owner url:" + url);
             const data = await fetch(url).then(response => response.json());
             context.commit('updateAssets', { owner, permissions, data } );
             // if (data.assets && data.assets.length > 0) {
@@ -410,7 +410,7 @@ const tokensModule = {
             //       permission = permissions[asset.owner.address.toLowerCase() + ':' + null];
             //     }
             //     context.commit('updateAssets', { permission, asset } );
-            //     // logDebug("tokensModule", "actions.loadLibrary() - asset(" + (parseInt(offset) + assetIndex) + ") name: " + asset.collection.name + ", slug: " + asset.collection.slug + ", owner: " + asset.owner.address + ", contract: " + asset.asset_contract.address + ", permission: " + JSON.stringify(permission));
+            //     // logInfo("moonCatDataModule", "actions.loadLibrary() - asset(" + (parseInt(offset) + assetIndex) + ") name: " + asset.collection.name + ", slug: " + asset.collection.slug + ", owner: " + asset.owner.address + ", contract: " + asset.asset_contract.address + ", permission: " + JSON.stringify(permission));
             //     // assets[asset.owner.address.toLowerCase() + ':' + asset.asset_contract.address.toLowerCase()] = { permission: permission, asset: asset };
             //   }
             // }
@@ -430,7 +430,7 @@ const tokensModule = {
             while (!completed) {
               const offset = PAGESIZE * page;
               const url = "https://api.opensea.io/api/v1/assets?owner=" + owner + "&asset_contract_address=" + contract + "&order_direction=desc&limit=" + PAGESIZE + "&offset=" + offset;
-              logDebug("tokensModule", "actions.loadLibrary() owner and contract url:" + url);
+              logInfo("moonCatDataModule", "actions.loadLibrary() owner and contract url:" + url);
               const data = await fetch(url).then(response => response.json());
               context.commit('updateAssets', { owner, permissions, data });
               // if (data.assets && data.assets.length > 0) {
@@ -440,7 +440,7 @@ const tokensModule = {
               //     if (permission == null) {
               //       permission = permissions[asset.owner.address.toLowerCase() + ':' + null];
               //     }
-              //     // logDebug("tokensModule", "actions.loadLibrary() - asset(" + (parseInt(offset) + assetIndex) + ") name: " + asset.collection.name + ", slug: " + asset.collection.slug + ", owner: " + asset.owner.address + ", contract: " + asset.asset_contract.address + ", permission: " + JSON.stringify(permission));
+              //     // logInfo("moonCatDataModule", "actions.loadLibrary() - asset(" + (parseInt(offset) + assetIndex) + ") name: " + asset.collection.name + ", slug: " + asset.collection.slug + ", owner: " + asset.owner.address + ", contract: " + asset.asset_contract.address + ", permission: " + JSON.stringify(permission));
               //     // TODO - Add timestamp, and add routine to remove expired entries
               //     // assets[asset.owner.address.toLowerCase() + ':' + asset.asset_contract.address.toLowerCase()] = { permission: permission, asset: asset };
               //     context.commit('updateAssets', { permission, asset });
@@ -456,16 +456,16 @@ const tokensModule = {
         }
         context.commit('updateAssetsCompletion');
         // for (const [key, asset] of Object.entries(assets)) {
-        //   logDebug("tokensModule", "actions.loadLibrary():" + key + " => " + JSON.stringify(asset).substring(0, 100));
+        //   logInfo("moonCatDataModule", "actions.loadLibrary():" + key + " => " + JSON.stringify(asset).substring(0, 100));
         // }
       }
     },
     updateNFTData(context, nftData) {
-      // logDebug("tokensModule", "actions.updateNFTData(" + JSON.stringify(nftData) + ")");
+      // logInfo("moonCatDataModule", "actions.updateNFTData(" + JSON.stringify(nftData) + ")");
       context.commit('updateNFTData', nftData);
     },
     updateSelectedId(context, selectedId) {
-      logDebug("tokensModule", "actions.updateSelectedId(" + JSON.stringify(selectedId) + ")");
+      logInfo("moonCatDataModule", "actions.updateSelectedId(" + JSON.stringify(selectedId) + ")");
       context.commit('updateSelectedId', selectedId);
     },
     // Called by Connection.execWeb3()
@@ -477,15 +477,15 @@ const tokensModule = {
       const coinbaseUpdated = store.getters['connection/coinbaseUpdated'];
       const coinbase = store.getters['connection/coinbase'];
 
-      logDebug("tokensModule", "execWeb3() start[" + count + "] rootState.route.params: " + JSON.stringify(rootState.route.params) + ", networkUpdated: " + networkUpdated + ", blockUpdated: " + blockUpdated + ", coinbaseUpdated: " + coinbaseUpdated+ ", powerOn: " + powerOn + ", connected: " + connected + ", coinbase: " + coinbase);
+      logInfo("moonCatDataModule", "execWeb3() start[" + count + "] rootState.route.params: " + JSON.stringify(rootState.route.params) + ", networkUpdated: " + networkUpdated + ", blockUpdated: " + blockUpdated + ", coinbaseUpdated: " + coinbaseUpdated+ ", powerOn: " + powerOn + ", connected: " + connected + ", coinbase: " + coinbase);
       if (coinbase != null) {
         if (!state.executing) {
           commit('updateExecuting', true);
-          logDebug("tokensModule", "execWeb3() executing[" + count + ", " + JSON.stringify(rootState.route.params) + ", " + networkUpdated + ", " + blockUpdated + ", " + coinbaseUpdated + "]");
+          logInfo("moonCatDataModule", "execWeb3() executing[" + count + ", " + JSON.stringify(rootState.route.params) + ", " + networkUpdated + ", " + blockUpdated + ", " + coinbaseUpdated + "]");
 
           var paramsChanged = false;
           if (state.params != rootState.route.params.param) {
-            logDebug("tokensModule", "execWeb3() params changed from " + state.params + " to " + JSON.stringify(rootState.route.params.param));
+            logDebug("moonCatDataModule", "execWeb3() params changed from " + state.params + " to " + JSON.stringify(rootState.route.params.param));
             paramsChanged = true;
             commit('updateParams', rootState.route.params.param);
           }
@@ -494,10 +494,10 @@ const tokensModule = {
 
             // You can also use an ENS name for the contract address
             const nftAddress = "token.zombiebabies.eth"; // state.nftData.nftAddress;
-            logDebug("tokensModule", "execWeb3() nftAddress: " + nftAddress);
+            logDebug("moonCatDataModule", "execWeb3() nftAddress: " + nftAddress);
 
             const nftAbi = ERC1155NFTABI;
-            // logDebug("tokensModule", "execWeb3() nftAbi: " + JSON.stringify(nftAbi));
+            // logDebug("moonCatDataModule", "execWeb3() nftAbi: " + JSON.stringify(nftAbi));
 
             // // The ERC-20 Contract ABI, which is a common contract interface
             // // for tokens (this is the Human-Readable ABI format)
@@ -516,43 +516,43 @@ const tokensModule = {
             //   "event Transfer(address indexed from, address indexed to, uint amount)"
             // ];
 
-            logDebug("tokensModule", "execWeb3() coinbase: " + coinbase);
+            logInfo("moonCatDataModule", "execWeb3() coinbase: " + coinbase);
             const provider = new ethers.providers.Web3Provider(window.ethereum);
 
             const moonCatRescue = new ethers.Contract(MOONCATRESCUEADDRESS, MOONCATRESCUEABI, provider);
             const totalSupply = await moonCatRescue.totalSupply();
-            logDebug("tokensModule", "execWeb3() moonCatRescue.totalSupply: " + totalSupply.toString());
+            logInfo("moonCatDataModule", "execWeb3() moonCatRescue.totalSupply: " + totalSupply.toString());
             const rescueIndex = await moonCatRescue.rescueIndex();
-            logDebug("tokensModule", "execWeb3() moonCatRescue.rescueIndex: " + rescueIndex.toString());
+            logInfo("moonCatDataModule", "execWeb3() moonCatRescue.rescueIndex: " + rescueIndex.toString());
             // const catIds = await moonCatRescue.getCatIds();
-            // logDebug("tokensModule", "execWeb3() moonCatRescue.catIds: " + JSON.stringify(catIds));
+            // logInfo("moonCatDataModule", "execWeb3() moonCatRescue.catIds: " + JSON.stringify(catIds));
             // console.log(JSON.stringify(catIds));
 
             const acclimatedMoonCatRescue = new ethers.Contract(ACCLIMATEDMOONCATADDRESS, ACCLIMATEDMOONCATABI, provider);
             const totalSupplyAcclimated = await acclimatedMoonCatRescue.totalSupply();
-            logDebug("tokensModule", "execWeb3() acclimatedMoonCatRescue.totalSupply: " + totalSupplyAcclimated.toString());
+            logInfo("moonCatDataModule", "execWeb3() acclimatedMoonCatRescue.totalSupply: " + totalSupplyAcclimated.toString());
 
             const wrappedMoonCatRescue = new ethers.Contract(WRAPPEDMOONCATADDRESS, WRAPPEDMOONCATABI, provider);
             const totalSupplyWrapped = await wrappedMoonCatRescue.totalSupply();
-            logDebug("tokensModule", "execWeb3() wrappedMoonCatRescue.totalSupply: " + totalSupplyWrapped.toString());
+            logInfo("moonCatDataModule", "execWeb3() wrappedMoonCatRescue.totalSupply: " + totalSupplyWrapped.toString());
             const _tokenIDToCatID = await wrappedMoonCatRescue._tokenIDToCatID(0);
-            logDebug("tokensModule", "execWeb3() wrappedMoonCatRescue._tokenIDToCatID: " + _tokenIDToCatID.toString());
+            logInfo("moonCatDataModule", "execWeb3() wrappedMoonCatRescue._tokenIDToCatID: " + _tokenIDToCatID.toString());
 
             if (false) {
             // console.table(provider);
             const name = await provider.lookupAddress(coinbase);
-            logDebug("tokensModule", "execWeb3() coinbase: " + JSON.stringify(store.getters['connection/coinbase']) + " => " + name);
+            logInfo("moonCatDataModule", "execWeb3() coinbase: " + JSON.stringify(store.getters['connection/coinbase']) + " => " + name);
 
             const beeeefRegistryContract = new ethers.Contract(BEEEEFREGISTRYENS, BEEEEFREGISTRYABI, provider);
             const entries = await beeeefRegistryContract.getEntries();
-            logDebug("tokensModule", "execWeb3() beeeefRegistryContract.entries: " + JSON.stringify(entries));
+            logInfo("moonCatDataModule", "execWeb3() beeeefRegistryContract.entries: " + JSON.stringify(entries));
 
             const addresses = [ "0x07fb31ff47Dc15f78C5261EEb3D711fb6eA985D1", "0x000001f568875F378Bf6d170B790967FE429C81A", "0xBeeef66749B64Afe43Bbc9475635Eb510cFE4922"];
             const ensReverseRecordsContract = new ethers.Contract(ENSREVERSERECORDSADDRESS, ENSREVERSERECORDSABI, provider);
             const allnames = await ensReverseRecordsContract.getNames(addresses);
-            logDebug("tokensModule", "execWeb3() allnames: " + JSON.stringify(addresses) + " => " + allnames);
+            logInfo("moonCatDataModule", "execWeb3() allnames: " + JSON.stringify(addresses) + " => " + allnames);
             const validNames = allnames.filter((n) => normalize(n) === n );
-            logDebug("tokensModule", "execWeb3() validNames: " + JSON.stringify(addresses) + " => " + validNames);
+            logInfo("moonCatDataModule", "execWeb3() validNames: " + JSON.stringify(addresses) + " => " + validNames);
             }
 
             if (false) {
@@ -560,29 +560,29 @@ const tokensModule = {
             //
             // // The Contract object
             const nftContract = new ethers.Contract(nftAddress, nftAbi, store.getters['connection/connection'].provider);
-            // logDebug("tokensModule", "execWeb3() nftContract: " + JSON.stringify(nftContract));
+            // logDebug("moonCatDataModule", "execWeb3() nftContract: " + JSON.stringify(nftContract));
 
             const tokenIds = store.getters['tokens/allTokenIds'];
             const accounts = [];
             for (let i = 0; i < tokenIds.length; i++) {
               accounts.push(store.getters['connection/coinbase']);
             }
-            logDebug("tokensModule", "execWeb3() tokens/allTokenIds: " + JSON.stringify(store.getters['tokens/allTokenIds']));
+            logDebug("moonCatDataModule", "execWeb3() tokens/allTokenIds: " + JSON.stringify(store.getters['tokens/allTokenIds']));
 
             const balanceOfs = await nftContract.balanceOfBatch(accounts, tokenIds);
-            logDebug("tokensModule", "execWeb3() balanceOfs: " + JSON.stringify(balanceOfs.map((x) => { return x.toString(); })));
+            logDebug("moonCatDataModule", "execWeb3() balanceOfs: " + JSON.stringify(balanceOfs.map((x) => { return x.toString(); })));
             commit('updateBalances', balanceOfs.map((x) => { return x.toString(); }));
 
             const cryptoPunksMarketContract = new ethers.Contract(CRYPTOPUNKMARKETADDRESS, CRYPTOPUNKMARKETABI, store.getters['connection/connection'].provider);
             const cpBalanceOf = await cryptoPunksMarketContract.balanceOf(store.getters['connection/coinbase']);
-            logDebug("tokensModule", "execWeb3() cpBalanceOf: " + cpBalanceOf);
+            logDebug("moonCatDataModule", "execWeb3() cpBalanceOf: " + cpBalanceOf);
             }
 
             // Direct query. Could deploy contract to perform multicall
             // for (let i = 0; i < 10000; i++) {
             //   const owner = await cryptoPunksMarketContract.punkIndexToAddress(i);
             //   if (i % 100 == 0) {
-            //     logDebug("tokensModule", "execWeb3() owner: " + owner + " " + i);
+            //     logDebug("moonCatDataModule", "execWeb3() owner: " + owner + " " + i);
             //   }
             //   // if (owner == store.getters['connection/coinbase']) {
             //   // }
@@ -594,9 +594,9 @@ const tokensModule = {
             req.overrideMimeType("application/json");
             req.open('GET', url, true);
             req.onload  = function() {
-              logDebug("tokensModule", "execWeb3() punkData txt: " + req.readyState + " => " + req.responseText);
+              logDebug("moonCatDataModule", "execWeb3() punkData txt: " + req.readyState + " => " + req.responseText);
               const punkData = JSON.parse(req.responseText);
-              logDebug("tokensModule", "execWeb3() punkData: " + JSON.stringify(punkData));
+              logDebug("moonCatDataModule", "execWeb3() punkData: " + JSON.stringify(punkData));
             };
             req.send(null);
 
@@ -606,10 +606,10 @@ const tokensModule = {
             req.overrideMimeType("application/json");
             req.open('GET', url, true);
             req.onload  = function() {
-              logDebug("tokensModule", "execWeb3() openSeaPunkData txt: " + req.readyState + " => " + req.responseText);
+              logDebug("moonCatDataModule", "execWeb3() openSeaPunkData txt: " + req.readyState + " => " + req.responseText);
               if (req.readyState == 4) {
                 const openSeaPunkData = JSON.parse(req.responseText);
-                logDebug("tokensModule", "execWeb3() openSeaPunkData JSON: " + JSON.stringify(openSeaPunkData));
+                logDebug("moonCatDataModule", "execWeb3() openSeaPunkData JSON: " + JSON.stringify(openSeaPunkData));
               }
             };
             req.send(null);
@@ -620,10 +620,10 @@ const tokensModule = {
             req.overrideMimeType("application/json");
             req.open('GET', url, true);
             req.onload  = function() {
-              logDebug("tokensModule", "execWeb3() pixelPortraitsData txt: " + req.readyState + " => " + req.responseText);
+              logDebug("moonCatDataModule", "execWeb3() pixelPortraitsData txt: " + req.readyState + " => " + req.responseText);
               if (req.readyState == 4) {
                 const pixelPortraitsData = JSON.parse(req.responseText);
-                logDebug("tokensModule", "execWeb3() pixelPortraitsData JSON: " + JSON.stringify(pixelPortraitsData));
+                logDebug("moonCatDataModule", "execWeb3() pixelPortraitsData JSON: " + JSON.stringify(pixelPortraitsData));
               }
             };
             req.send(null);
@@ -634,10 +634,10 @@ const tokensModule = {
             req.overrideMimeType("application/json");
             req.open('GET', url, true);
             req.onload  = function() {
-              logDebug("tokensModule", "execWeb3() openSeaPunkData txt: " + req.readyState + " => " + req.responseText);
+              logDebug("moonCatDataModule", "execWeb3() openSeaPunkData txt: " + req.readyState + " => " + req.responseText);
               if (req.readyState == 4) {
                 const openSeaPunkData = JSON.parse(req.responseText);
-                logDebug("tokensModule", "execWeb3() openSeaPunkData JSON: " + JSON.stringify(openSeaPunkData));
+                logInfo("moonCatDataModule", "execWeb3() openSeaPunkData JSON: " + JSON.stringify(openSeaPunkData));
               }
             };
             req.send(null);
@@ -645,11 +645,11 @@ const tokensModule = {
             // PunkBodies - Direct to contract
             const punkBodiesContract = new ethers.Contract(PUNKBODIESADDRESS, PUNKBODIESABI, store.getters['connection/connection'].provider);
             const pbBalanceOf = await punkBodiesContract.balanceOf(store.getters['connection/coinbase']);
-            logDebug("tokensModule", "execWeb3() pbBalanceOf: " + pbBalanceOf);
+            logInfo("moonCatDataModule", "execWeb3() pbBalanceOf: " + pbBalanceOf);
 
             for (let i = 0; i < pbBalanceOf; i++) {
                 const tokenId = await punkBodiesContract.tokenOfOwnerByIndex(store.getters['connection/coinbase'], i);
-                logDebug("tokensModule", "execWeb3() i: " + i + ", tokenId: " + tokenId);
+                logInfo("moonCatDataModule", "execWeb3() i: " + i + ", tokenId: " + tokenId);
             }
             */
 
@@ -660,7 +660,7 @@ const tokensModule = {
             //
             // // TODO: Load up STARTUPTOKENLIST ?
             //
-            // // logDebug("tokensModule", "execWeb3() state.tokenData: " + JSON.stringify(state.tokenData));
+            // // logInfo("moonCatDataModule", "execWeb3() state.tokenData: " + JSON.stringify(state.tokenData));
             // if (count == 1) {
             //   for (var address in state.tokenData) {
             //     var token = state.tokenData[address];
@@ -680,7 +680,7 @@ const tokensModule = {
             //   var chunks = chunkArray(addresses, 10);
             //   for (var chunkIndex in chunks) {
             //     var chunk = chunks[chunkIndex];
-            //     var _tokensInfo = promisify(cb => tokenToolz.getTokensInfo(chunk, store.getters['connection/coinbase'], store.getters['optinoFactory/address'], cb));
+            //     var _tokensInfo = promisify(cb => tokenToolz.getMoonCatDataInfo(chunk, store.getters['connection/coinbase'], store.getters['optinoFactory/address'], cb));
             //     var tokensInfo = await _tokensInfo;
             //     for (var tokenIndex = 0; tokenIndex < chunk.length; tokenIndex++) {
             //       var address = chunk[tokenIndex].toLowerCase();
@@ -688,18 +688,18 @@ const tokensModule = {
             //       commit('updateToken', { address: token.address, symbol: token.symbol, name: token.name, decimals: token.decimals, totalSupply: tokensInfo[0][tokenIndex].shift(-token.decimals).toString(), balance: tokensInfo[1][tokenIndex].shift(-token.decimals).toString(), allowance: tokensInfo[2][tokenIndex].shift(-token.decimals).toString(), source: token.source });
             //     }
             //   }
-            //   // logDebug("tokensModule", "timeoutCallback() - refreshed " + addressesLength);
+            //   // logInfo("moonCatDataModule", "timeoutCallback() - refreshed " + addressesLength);
             // }
           }
           commit('updateExecuting', false);
-          logDebug("tokensModule", "execWeb3() end[" + count + ", " + networkUpdated + ", " + blockUpdated + ", " + coinbaseUpdated + "]");
+          logDebug("moonCatDataModule", "execWeb3() end[" + count + ", " + networkUpdated + ", " + blockUpdated + ", " + coinbaseUpdated + "]");
         } else {
-          logDebug("tokensModule", "execWeb3() already executing[" + count + ", " + networkUpdated + ", " + blockUpdated + ", " + coinbaseUpdated + "]");
+          logDebug("moonCatDataModule", "execWeb3() already executing[" + count + ", " + networkUpdated + ", " + blockUpdated + ", " + coinbaseUpdated + "]");
         }
       }
     },
   },
   // mounted() {
-  //   logDebug("tokensModule", "mounted() $route: " + JSON.stringify(this.$route.params));
+  //   logInfo("moonCatDataModule", "mounted() $route: " + JSON.stringify(this.$route.params));
   // },
 };

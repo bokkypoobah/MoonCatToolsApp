@@ -572,7 +572,7 @@ const NFTPostcard = {
         console.log("IndexedDB NOT supported");
       }
 
-      logInfo("NFTPostcard", "loadCatData() Dexie");
+      logDebug("NFTPostcard", "loadCatData() Dexie");
 
       var db0 = new Dexie("MoonCatDB");
       db0.version(1).stores({
@@ -594,19 +594,19 @@ const NFTPostcard = {
       });
 
       const someFriends = await db0.apiData.toArray();
-      logInfo("NFTPostcard", "loadCatData() Dexie - someFriends: " + JSON.stringify(someFriends));
+      logDebug("NFTPostcard", "loadCatData() Dexie - someFriends: " + JSON.stringify(someFriends));
 
-      logInfo("NFTPostcard", "loadCatData() CATIDS.length: " + CATIDS.length);
+      logDebug("NFTPostcard", "loadCatData() CATIDS.length: " + CATIDS.length);
       // const dbName = "UserDB";
       // const objectStoreName = "UserDetails";
       // const version = 1;
       // const openRequest = indexedDB.open(dbName, version);
       // openRequest.onerror = function(event) {
-      //   logInfo("NFTPostcard", "loadCatData() - openRequest.onerror: " + JSON.stringify(event));
+      //   logDebug("NFTPostcard", "loadCatData() - openRequest.onerror: " + JSON.stringify(event));
       // };
       // openRequest.onupgradeneeded = function(event) {
       //   const db = event.target.result;
-      //   logInfo("NFTPostcard", "loadCatData() - openRequest.onupgradeneeded: " + JSON.stringify(db));
+      //   logDebug("NFTPostcard", "loadCatData() - openRequest.onupgradeneeded: " + JSON.stringify(db));
       //   // Create the UserDetails object store
       //   // with auto-increment id
       //   const store = db.createObjectStore(objectStoreName, {
@@ -617,16 +617,16 @@ const NFTPostcard = {
       //   //     unique: true
       //   // });
       // };
-      // // logInfo("NFTPostcard", "loadCatData() openRequest: " + JSON.stringify(openRequest));
+      // // logDebug("NFTPostcard", "loadCatData() openRequest: " + JSON.stringify(openRequest));
       // // var transaction = db.transaction(["customers"], "readwrite");
       //
       // function insertUser(db, user) {
-      //   logInfo("NFTPostcard", "loadCatData() - insertUser: " + JSON.stringify(user));
+      //   logDebug("NFTPostcard", "loadCatData() - insertUser: " + JSON.stringify(user));
       //   const txn = db.transaction([objectStoreName], 'readwrite');
       //   const store = txn.objectStore(objectStoreName);
       //   let query = store.put(user);
       //   query.onsuccess = function (event) {
-      //     logInfo("NFTPostcard", "loadCatData() - insertUser: " + JSON.stringify(event));
+      //     logDebug("NFTPostcard", "loadCatData() - insertUser: " + JSON.stringify(event));
       //     console.table(store);
       //     const results = store.getAllEntries();
       //     console.table(results);
@@ -639,9 +639,9 @@ const NFTPostcard = {
       //     db.close();
       //   };
       // }
-      // logInfo("NFTPostcard", "loadCatData() - openRequest.onsuccess before");
+      // logDebug("NFTPostcard", "loadCatData() - openRequest.onsuccess before");
       // openRequest.onsuccess = (event) => {
-      //   logInfo("NFTPostcard", "loadCatData() - openRequest.onsuccess: " + JSON.stringify(event));
+      //   logDebug("NFTPostcard", "loadCatData() - openRequest.onsuccess: " + JSON.stringify(event));
       //   const db = event.target.result;
       //   insertUser(db, {
       //     email: 'john.doe@outlook.com',
@@ -655,7 +655,7 @@ const NFTPostcard = {
       //   });
       //   console.table(openRequest);
       // };
-      // logInfo("NFTPostcard", "loadCatData() - openRequest.onsuccess after");
+      // logDebug("NFTPostcard", "loadCatData() - openRequest.onsuccess after");
 
 
       const chunkSize = 50; // 500
@@ -664,11 +664,11 @@ const NFTPostcard = {
 
       for (let i = 0; i < CATIDS.length && i < 200; i += chunkSize) {
         const slice = CATIDS.slice(i, i + chunkSize);
-        // logInfo("NFTPostcard", "loadCatData() slice: " + JSON.stringify(slice));
+        // logDebug("NFTPostcard", "loadCatData() slice: " + JSON.stringify(slice));
         try {
-          // logInfo("NFTPostcard", "loadCatData() url: " + "https://api.mooncat.community/traits/" + catId);
+          // logDebug("NFTPostcard", "loadCatData() url: " + "https://api.mooncat.community/traits/" + catId);
           const requests = slice.map((catId) => fetch("https://api.mooncat.community/traits/" + catId));
-          // logInfo("NFTPostcard", "loadCatData() url: " + "https://api.mooncat.community/contract-details/" + catId);
+          // logDebug("NFTPostcard", "loadCatData() url: " + "https://api.mooncat.community/contract-details/" + catId);
           // const requests = slice.map((catId) => fetch("https://api.mooncat.community/contract-details/" + catId));
           const responses = await Promise.all(requests);
           const errors = responses.filter((response) => !response.ok);
@@ -681,9 +681,9 @@ const NFTPostcard = {
           data.forEach((datum) => {
             // console.table(datum);
             Vue.set(t.traitData, datum.details.catId, datum);
-            // logInfo("NFTPostcard", "loadCatData() rescueIndex: " + datum.details.rescueIndex);
-            // logInfo("NFTPostcard", "loadCatData() datum: " + JSON.stringify(datum, null, 2));
-            // logInfo("NFTPostcard", "loadCatData() datum: " + JSON.stringify(t.traitData[datum.details.rescueIndex], null, 2));
+            // logDebug("NFTPostcard", "loadCatData() rescueIndex: " + datum.details.rescueIndex);
+            // logDebug("NFTPostcard", "loadCatData() datum: " + JSON.stringify(datum, null, 2));
+            // logDebug("NFTPostcard", "loadCatData() datum: " + JSON.stringify(t.traitData[datum.details.rescueIndex], null, 2));
           });
         }
         catch (errors) {
@@ -696,7 +696,7 @@ const NFTPostcard = {
 
       /*
       var slice = CATIDS.slice(0, 5);
-      // logInfo("NFTPostcard", "loadCatData() slice: " + JSON.stringify(slice));
+      // logDebug("NFTPostcard", "loadCatData() slice: " + JSON.stringify(slice));
       try {
         const requests = slice.map((catId) => fetch("https://api.mooncat.community/traits/" + catId));
         const responses = await Promise.all(requests);
@@ -714,11 +714,11 @@ const NFTPostcard = {
       */
 
       // for (let i = 0; i < 10; i++) {
-      //   logInfo("NFTPostcard", "loadCatData() i: " + i);
+      //   logDebug("NFTPostcard", "loadCatData() i: " + i);
       //   const url = "https://api.mooncat.community/traits/" + i;
-      //   logInfo("NFTPostcard", "loadCatData() url:" + url);
+      //   logDebug("NFTPostcard", "loadCatData() url:" + url);
       //   const data = await fetch(url).then(response => response.json());
-      //   logInfo("NFTPostcard", "loadCatData() data:" + JSON.stringify(data));
+      //   logDebug("NFTPostcard", "loadCatData() data:" + JSON.stringify(data));
       // }
 
 
